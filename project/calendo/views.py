@@ -77,8 +77,14 @@ def calendar_index(request):
 def schedule_detail(request, pk):
     schedule = get_object_or_404(Schedule, pk=pk, user=request.user)
     schedules = Schedule.objects.filter(user=request.user)  # For sidebar
-    items = schedule.items.all()  # Get items associated with the schedule
+    items = schedule.items.prefetch_related('occurrences__days_of_week')  # Prefetch occurrences and days
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    # Prepare occurrences with days
+    for item in items:
+        for occurrence in item.occurrences.all():
+            occurrence.days = [day.name for day in occurrence.days_of_week.all()]  # Preprocess days as a list of names
+
     return render(request, "calendar/schedule-detail.html", {
         "schedule": schedule,
         "schedules": schedules,
@@ -143,3 +149,20 @@ def add_schedule_item(request, pk):
         return redirect("schedule_detail", pk=pk)
 
     return redirect("schedule_detail", pk=pk)
+
+def update_item(request, pk):
+    item = get_object_or_404(Item, id=pk)
+    if request.method == "POST":
+        item_name = request.POST.get("item_name")
+        item_type = request.POST.get("item_type")
+        item_notes = request.POST.get("item_notes")
+
+        # Update the item fields
+        item.item_name = item_name
+        item.type = item_type
+        item.notes = item_notes
+        item.save()
+
+        messages.success(request, "Item updated successfully!")
+        return redirect("schedule_detail", pk=item.schedule.id)
+    return redirect("schedule_detail", pk=item.schedule.id)

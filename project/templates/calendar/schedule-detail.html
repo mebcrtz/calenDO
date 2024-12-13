@@ -27,7 +27,7 @@
             <!-- Buttons -->
             <div class="d-flex flex-column align-items-start me-4">
                 <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addItemModal">Add Item</button>
-                <button class="btn btn-secondary mb-2">Edit Item</button>
+                <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#editItemModal">Edit Item</button>
                 <button class="btn btn-danger mb-2">Remove Item</button>
                 <button class="btn btn-success mb-2">Save</button>
                 <button class="btn btn-info mb-2">Export</button>
@@ -78,5 +78,9 @@
     </section>
 </div>
 {% include "partials/add-item-modal.html" %}
+{% include "partials/edit-item-modal.html" %}
+{% include "partials/edit-selected-item-modal.html" %}
+
+
 
 {% endblock %}
