@@ -23,26 +23,6 @@
             <h2>{{ schedule.schedule_name }}</h2>
             <button class="btn btn-outline-secondary">Settings</button>
         </div>
-        <table class="table table-bordered mt-3">
-            <thead>
-                <tr>
-                    <th>Monday</th>
-                    <th>Tuesday</th>
-                    <th>Wednesday</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for hour in hours %}
-                <tr>
-                    {% for day in days %}
-                    <td></td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
         <div class="d-flex flex-row align-items-start">
             <!-- Buttons -->
             <div class="d-flex flex-column align-items-start me-4">
@@ -63,6 +43,7 @@
                                 <th>Name</th>
                                 <th>Type</th>
                                 <th>Notes</th>
+                                <th>Occurrences</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,6 +52,20 @@
                                     <td>{{ item.item_name }}</td>
                                     <td>{{ item.get_type_display }}</td>
                                     <td>{{ item.notes }}</td>
+                                    <td>
+                                        <ul>
+                                            {% for occurrence in item.occurrences.all %}
+                                                <li>
+                                                    {% for day in occurrence.days_of_week.all %}
+                                                        {{ day.name }}{% if not forloop.last %}, {% endif %}
+                                                    {% endfor %}: 
+                                                    {{ occurrence.start_time|time:"H:i" }} - {{ occurrence.end_time|time:"H:i" }}
+                                                </li>
+                                            {% empty %}
+                                                <li>No time specified</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
