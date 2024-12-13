@@ -3,8 +3,11 @@ from django.http import JsonResponse, HttpResponse
 
 from .forms import *
 from .models import *
-
 # Create your views here.
+
+def dashboard(request):
+    return render(request, 'dashboard.html')
+
 def todo_index(request):
     # Organize tasks by section
     tasks = Task.objects.all()
