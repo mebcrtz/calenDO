@@ -63,7 +63,7 @@ def update_task(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 def calendar(request):
-    return HttpResponse("This is the calendar page")
+    return render(request, 'calendar/calendar-index.html')
 
 def todo(ListView):
     return HttpResponse("This is the todo page")

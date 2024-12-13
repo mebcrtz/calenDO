@@ -1,0 +1,50 @@
+{% extends "partials/base.html" %}
+
+{% block content %}
+<div class="row mt-4">
+    <aside class="col-3">
+        <h2 class="text-primary">calenDO</h2>
+        <button class="btn btn-primary w-100 mb-3">Create New Schedule</button>
+        <ul class="list-group">
+            <li class="list-group-item">Schedule 1</li>
+            <li class="list-group-item">Schedule 2</li>
+            <li class="list-group-item">Schedule 3</li>
+            <li class="list-group-item"><a href="#">See All</a></li>
+        </ul>
+    </aside>
+    <section class="col-9">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Schedule Title</h2>
+            <button class="btn btn-outline-secondary">Settings</button>
+        </div>
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for hour in hours %}
+                <tr>
+                    {% for day in days %}
+                    <td></td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="d-flex flex-column align-items-start">
+            <button class="btn btn-primary mb-2">Add Item</button>
+            <button class="btn btn-secondary mb-2">Edit Item</button>
+            <button class="btn btn-danger mb-2">Remove Item</button>
+            <button class="btn btn-success mb-2">Save</button>
+            <button class="btn btn-info mb-2">Export</button>
+            <button class="btn btn-dark mb-2">Delete</button>
+        </div>
+    </section>
+</div>
+{% endblock %}
