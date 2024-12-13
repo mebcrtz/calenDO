@@ -65,3 +65,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('addTimeButton').addEventListener('click', function () {
+        const timeBlocks = document.getElementById('timeBlocks');
+        const existingBlock = document.querySelector('.time-block');
+        const newBlock = existingBlock.cloneNode(true);
+
+        // Clear inputs in the cloned block
+        newBlock.querySelectorAll('input').forEach(input => {
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+
+        timeBlocks.appendChild(newBlock);
+    });
+</script>

@@ -78,7 +78,13 @@ def schedule_detail(request, pk):
     schedule = get_object_or_404(Schedule, pk=pk, user=request.user)
     schedules = Schedule.objects.filter(user=request.user)  # For sidebar
     items = schedule.items.all()  # Get items associated with the schedule
-    return render(request, "calendar/schedule-detail.html", {"schedule": schedule, "schedules": schedules, "items": items})
+    days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    return render(request, "calendar/schedule-detail.html", {
+        "schedule": schedule,
+        "schedules": schedules,
+        "items": items,
+        "days_of_week": days_of_week,
+    })
 
 def schedule_list(request):
     schedules = Schedule.objects.filter(user=request.user)
@@ -120,16 +126,17 @@ def add_schedule_item(request, pk):
             notes=notes
         )
 
-        # Create the DayOfWeek objects if they don't exist
-        for day_name in days:
-            day_of_week, _ = DayOfWeek.objects.get_or_create(name=day_name)
-            # Create occurrences for each time block
-            for start_time, end_time in zip(start_times, end_times):
-                occurrence = ItemOccurrence.objects.create(
-                    item=item,
-                    start_time=start_time,
-                    end_time=end_time
-                )
+        # Process each time block once
+        for start_time, end_time in zip(start_times, end_times):
+            # Create a single ItemOccurrence for each time range
+            occurrence = ItemOccurrence.objects.create(
+                item=item,
+                start_time=start_time,
+                end_time=end_time
+            )
+            # Add all selected days to this occurrence
+            for day_name in days:
+                day_of_week, _ = DayOfWeek.objects.get_or_create(name=day_name)
                 occurrence.days_of_week.add(day_of_week)
 
         messages.success(request, "Item added successfully!")
