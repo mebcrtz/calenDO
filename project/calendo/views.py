@@ -153,7 +153,7 @@ def add_schedule_item(request, pk):
 def update_item(request, pk):
     item = get_object_or_404(Item, id=pk)
     if request.method == "POST":
-        item_name = request.POST.get("item_name")
+        item_name = request.POST.get("itemName")
         item_type = request.POST.get("item_type")
         item_notes = request.POST.get("item_notes")
 
@@ -165,4 +165,48 @@ def update_item(request, pk):
 
         messages.success(request, "Item updated successfully!")
         return redirect("schedule_detail", pk=item.schedule.id)
+    return redirect("schedule_detail", pk=item.schedule.id)
+
+def update_item_details(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+
+    if request.method == "POST":
+        # Debugging: Print the POST data
+        print(request.POST)
+
+        item_name = request.POST.get("itemName")
+        item_type = request.POST.get("itemType")
+        item_notes = request.POST.get("notes", "")
+
+        if not item_name:  # Check if the item name is empty
+            messages.error(request, "Item name cannot be empty!")
+            return redirect("schedule_detail", pk=item.schedule.id)
+
+        # Update the Item fields
+        item.item_name = item_name
+        item.type = item_type
+        item.notes = item_notes
+        item.save()
+
+        # Clear existing occurrences
+        item.occurrences.all().delete()
+
+        # Add new occurrences
+        days = request.POST.getlist("days[]")
+        start_times = request.POST.getlist("startTime[]")
+        end_times = request.POST.getlist("endTime[]")
+
+        for start_time, end_time in zip(start_times, end_times):
+            occurrence = ItemOccurrence.objects.create(
+                item=item,
+                start_time=start_time,
+                end_time=end_time
+            )
+            for day_name in days:
+                day_of_week, _ = DayOfWeek.objects.get_or_create(name=day_name)
+                occurrence.days_of_week.add(day_of_week)
+
+        messages.success(request, "Item updated successfully!")
+        return redirect("schedule_detail", pk=item.schedule.id)
+
     return redirect("schedule_detail", pk=item.schedule.id)
