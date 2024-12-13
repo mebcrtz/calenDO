@@ -28,7 +28,37 @@ def create_task(request):
         form = TaskForm()
     return render(request, 'modal.html', {'form': form})
 
+def task_detail(request, task_id):
+    task = Task.objects.get(id=task_id)
+    task_data = {
+        "task_name": task.task_name,
+        "description": task.description,
+        # "notes": task.notes.split("\\n") if task.notes else [],
+        "due_date": task.due_date.strftime('%Y-%m-%d'),
+        "section": task.section,
+        "priority": task.priority,
+    }
+    return JsonResponse(task_data)
 
+def update_task(request):
+    if request.method == "POST":
+        task_id = request.POST.get("task_id")
+        if not task_id:
+            return JsonResponse({"error": "Task ID is missing"}, status=400)
+
+        try:
+            task = Task.objects.get(id=task_id)
+            task.task_name = request.POST.get("task_name")
+            task.description = request.POST.get("description")
+            task.due_date = request.POST.get("due_date")
+            task.section = request.POST.get("section")
+            task.priority = request.POST.get("priority")
+            task.save()
+            return redirect('calendo-index')
+        except Task.DoesNotExist:
+            return JsonResponse({"error": "Task not found"}, status=404)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
 
 def calendar(request):
     return HttpResponse("This is the calendar page")
