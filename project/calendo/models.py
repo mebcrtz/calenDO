@@ -18,3 +18,12 @@ class Task(models.Model):
     
     class Meta:
         ordering = ['status']
+
+
+# class Note(models.Model):
+#     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='notes')
+#     content = models.TextField()
+#     timestamp = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"Note for {self.task.task_name} at {self.timestamp}"
