@@ -68,4 +68,5 @@ def update_task(request):
 '''CALENDAR VIEWS'''
 
 def calendar(request):
+    hours = range(9, 15)
     return render(request, 'calendar/calendar-index.html')
