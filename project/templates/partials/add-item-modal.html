@@ -1,0 +1,101 @@
+<!-- Add Item Modal -->
+<div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addItemModalLabel">Create Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addItemForm">
+                    <div class="btn-group w-100 mb-3" role="group" aria-label="Event or Class">
+                        <input type="radio" class="btn-check" name="itemType" id="event" value="Event" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="event">Event</label>
+
+                        <input type="radio" class="btn-check" name="itemType" id="class" value="Class" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="class">Class</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemName" class="form-label">Item Name:</label>
+                        <input type="text" class="form-control" id="itemName">
+                    </div>
+
+                    <div id="timeBlocks">
+                        <div class="time-block mb-3">
+                            <label>Days:</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="monday" value="Monday">
+                                <label class="form-check-label" for="monday">Monday</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="tuesday" value="Tuesday">
+                                <label class="form-check-label" for="tuesday">Tuesday</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="wednesday" value="Wednesday">
+                                <label class="form-check-label" for="wednesday">Wednesday</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="thursday" value="Thursday">
+                                <label class="form-check-label" for="thursday">Thursday</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="friday" value="Friday">
+                                <label class="form-check-label" for="friday">Friday</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="saturday" value="Saturday">
+                                <label class="form-check-label" for="saturday">Saturday</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="sunday" value="Sunday">
+                                <label class="form-check-label" for="sunday">Sunday</label>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <label for="startTime" class="form-label">Start Time:</label>
+                                    <input type="time" class="form-control" id="startTime">
+                                </div>
+                                <div class="col">
+                                    <label for="endTime" class="form-label">End Time:</label>
+                                    <input type="time" class="form-control" id="endTime">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary" id="addTimeButton">Add Another Time</button>
+
+                    <div class="mb-3 mt-3">
+                        <label for="notes" class="form-label">Notes:</label>
+                        <textarea class="form-control" id="notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('addTimeButton').addEventListener('click', function () {
+        const timeBlock = document.querySelector('.time-block');
+        const newTimeBlock = timeBlock.cloneNode(true);
+
+        // Clear inputs in the cloned block
+        newTimeBlock.querySelectorAll('input').forEach(input => {
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+
+        document.getElementById('timeBlocks').appendChild(newTimeBlock);
+    });
+</script>

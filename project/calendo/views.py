@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
+from datetime import time
 
 from .forms import *
 from .models import *
@@ -67,6 +68,30 @@ def update_task(request):
 
 '''CALENDAR VIEWS'''
 
-def calendar(request):
-    hours = range(9, 15)
-    return render(request, 'calendar/calendar-index.html')
+def calendar_index(request):
+    schedules = Schedule.objects.filter(user=request.user)
+    return render(request, "calendar/calendar-index.html", {"schedules": schedules})
+
+def schedule_detail(request, pk):
+    schedule = get_object_or_404(Schedule, pk=pk, user=request.user)
+    return render(request, "schedule-detail.html", {"schedule": schedule})
+
+def schedule_list(request):
+    schedules = Schedule.objects.filter(user=request.user)
+    return render(request, "schedule-list.html", {"schedules": schedules})
+
+def create_schedule(request):
+    if request.method == "POST":
+        schedule_name = request.POST.get("schedule_name")
+        if schedule_name:
+            Schedule.objects.create(
+                schedule_name=schedule_name,
+                user=request.user
+            )
+            return redirect("calendar_index")  # Replace with the name of your schedule list view
+        else:
+            # Return an error message or redirect with an error
+            return render(request, "create_schedule.html", {"error": "Schedule name is required."})
+    else:
+        # Render a form page if accessed via GET
+        return render(request, "create_schedule.html")
