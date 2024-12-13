@@ -9,6 +9,4 @@ urlpatterns = [
     path('todo/update-task/', views.update_task, name='update_task'),
 
     path('calendar/', views.calendar, name='calendo-calendar'),
-    path('todo/', views.todo, name='calendo-todo'),
-
 ]

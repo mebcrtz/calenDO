@@ -8,6 +8,8 @@ from .models import *
 def dashboard(request):
     return render(request, 'dashboard.html')
 
+'''TO-DO VIEWS'''
+
 def todo_index(request):
     # Organize tasks by section
     tasks = Task.objects.all()
@@ -62,8 +64,8 @@ def update_task(request):
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
+
+'''CALENDAR VIEWS'''
+
 def calendar(request):
     return render(request, 'calendar/calendar-index.html')
-
-def todo(ListView):
-    return HttpResponse("This is the todo page")

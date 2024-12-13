@@ -9,25 +9,32 @@
             <button class="btn btn-outline-secondary">Sort</button>
         </div>
         <div class="row">
-            {% for section, tasks in sections_and_tasks.items %}
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-header bg-light">{{ section }}</div>
-                    <div class="card-body">
-                        {% for task in tasks %}
-                        <div class="card mb-2 task-card" data-task-id="{{ task.id }}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ task.task_name }}</h5>
-                                <p class="card-text">{{ task.description }}</p>
-                                <p class="text-muted">{{ task.due_date }}</p>
+            {% if sections_and_tasks %}
+                {% for section, tasks in sections_and_tasks.items %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-light">{{ section }}</div>
+                        <div class="card-body">
+                            {% for task in tasks %}
+                            <div class="card mb-2 task-card" data-task-id="{{ task.id }}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ task.task_name }}</h5>
+                                    <p class="card-text">{{ task.description }}</p>
+                                    <p class="text-muted">{{ task.due_date }}</p>
+                                </div>
                             </div>
+                            {% endfor %}
+                            <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add Another Task</button>
                         </div>
-                        {% endfor %}
-                        <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add Another Task</button>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <div class="col-md-12 text-center">
+                    <p>Yey! You have completed your tasks. Click the button below to add a new task.</p>
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add Task</button>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -63,8 +70,5 @@
                 });
             });
         });
-
     </script>
 {% endblock %}
-
-
