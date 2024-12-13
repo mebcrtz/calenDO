@@ -27,3 +27,52 @@ class Task(models.Model):
 
 #     def __str__(self):
 #         return f"Note for {self.task.task_name} at {self.timestamp}"
+
+
+class Schedule(models.Model):
+    schedule_name = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="schedules")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.schedule_name
+    
+
+class Item(models.Model):
+    EVENT_TYPE_CHOICES = [
+        ('event', 'Event'),
+        ('class', 'Class'),
+    ]
+
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, related_name="items")
+    item_name = models.CharField(max_length=255)
+    type = models.CharField(max_length=10, choices=EVENT_TYPE_CHOICES)
+    notes = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.item_name
+    
+
+class ItemOccurrence(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="occurrences")
+    day_of_week = models.CharField(
+        max_length=9,  # Monday, Tuesday, etc.
+        choices=[
+            ('Monday', 'Monday'),
+            ('Tuesday', 'Tuesday'),
+            ('Wednesday', 'Wednesday'),
+            ('Thursday', 'Thursday'),
+            ('Friday', 'Friday'),
+            ('Saturday', 'Saturday'),
+            ('Sunday', 'Sunday'),
+        ]
+    )
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        return f"{self.item.item_name} ({self.day_of_week} {self.start_time}-{self.end_time})"
+
