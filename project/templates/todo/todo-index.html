@@ -55,7 +55,7 @@
             taskCards.forEach(card => {
                 card.addEventListener('click', () => {
                     const taskId = card.getAttribute('data-task-id');
-                    fetch(`/task-detail/${taskId}/`)
+                    fetch(`/todo/task-detail/${taskId}/`)
                         .then(response => response.json())
                         .then(data => {
                             // Populate the hidden input field

@@ -5,7 +5,7 @@ from .forms import *
 from .models import *
 
 # Create your views here.
-def index(request):
+def todo_index(request):
     # Organize tasks by section
     tasks = Task.objects.all()
     sections_and_tasks = {}
@@ -13,14 +13,14 @@ def index(request):
         if task.section not in sections_and_tasks:
             sections_and_tasks[task.section] = []
         sections_and_tasks[task.section].append(task)
-    return render(request, 'todo/index.html', {'sections_and_tasks': sections_and_tasks})
+    return render(request, 'todo/todo-index.html', {'sections_and_tasks': sections_and_tasks})
 
 def create_task(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('calendo-index')
+            return redirect('todo_index')
         else:
             return JsonResponse({'success': False, 'errors': form.errors})
     else:
@@ -53,7 +53,7 @@ def update_task(request):
             task.section = request.POST.get("section")
             task.priority = request.POST.get("priority")
             task.save()
-            return redirect('calendo-index')
+            return redirect('todo_index')
         except Task.DoesNotExist:
             return JsonResponse({"error": "Task not found"}, status=404)
 
