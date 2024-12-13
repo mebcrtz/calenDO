@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from datetime import time
+from django.contrib import messages
 
 from .forms import *
 from .models import *
@@ -70,11 +71,14 @@ def update_task(request):
 
 def calendar_index(request):
     schedules = Schedule.objects.filter(user=request.user)
+    days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     return render(request, "calendar/calendar-index.html", {"schedules": schedules})
 
 def schedule_detail(request, pk):
     schedule = get_object_or_404(Schedule, pk=pk, user=request.user)
-    return render(request, "schedule-detail.html", {"schedule": schedule})
+    schedules = Schedule.objects.filter(user=request.user)  # For sidebar
+    items = schedule.items.all()  # Get items associated with the schedule
+    return render(request, "calendar/schedule-detail.html", {"schedule": schedule, "schedules": schedules, "items": items})
 
 def schedule_list(request):
     schedules = Schedule.objects.filter(user=request.user)
@@ -95,3 +99,40 @@ def create_schedule(request):
     else:
         # Render a form page if accessed via GET
         return render(request, "create_schedule.html")
+    
+def add_schedule_item(request, pk):
+    if request.method == "POST":
+        schedule = get_object_or_404(Schedule, pk=pk, user=request.user)
+
+        # Get form data
+        item_name = request.POST.get("itemName")
+        item_type = request.POST.get("itemType")
+        notes = request.POST.get("notes", "")
+        days = request.POST.getlist("days[]")
+        start_times = request.POST.getlist("startTime[]")
+        end_times = request.POST.getlist("endTime[]")
+
+        # Create the Item
+        item = Item.objects.create(
+            schedule=schedule,
+            item_name=item_name,
+            type=item_type,
+            notes=notes
+        )
+
+        # Create the DayOfWeek objects if they don't exist
+        for day_name in days:
+            day_of_week, _ = DayOfWeek.objects.get_or_create(name=day_name)
+            # Create occurrences for each time block
+            for start_time, end_time in zip(start_times, end_times):
+                occurrence = ItemOccurrence.objects.create(
+                    item=item,
+                    start_time=start_time,
+                    end_time=end_time
+                )
+                occurrence.days_of_week.add(day_of_week)
+
+        messages.success(request, "Item added successfully!")
+        return redirect("schedule_detail", pk=pk)
+
+    return redirect("schedule_detail", pk=pk)

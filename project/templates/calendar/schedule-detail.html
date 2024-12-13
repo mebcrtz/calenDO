@@ -1,0 +1,87 @@
+{% extends "partials/base.html" %}
+
+{% block content %}
+<div class="row mt-4">
+    <aside class="col-3">
+        <h2 class="text-primary">calenDO</h2>
+        <button class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#createScheduleModal">Create New Schedule</button>
+        <ul class="list-group" id="scheduleList">
+            {% for schedule in schedules %}
+                <li class="list-group-item">
+                    <a href="{% url 'schedule_detail' schedule.id %}" class="text-decoration-none">{{ schedule.schedule_name }}</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item">No schedules available</li>
+            {% endfor %}
+            <li class="list-group-item">
+                <a href="{% url 'schedule_list' %}" class="text-decoration-none">See All</a>
+            </li>
+        </ul>
+    </aside>
+    <section class="col-9" id="calendarIndex">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>{{ schedule.schedule_name }}</h2>
+            <button class="btn btn-outline-secondary">Settings</button>
+        </div>
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for hour in hours %}
+                <tr>
+                    {% for day in days %}
+                    <td></td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="d-flex flex-row align-items-start">
+            <!-- Buttons -->
+            <div class="d-flex flex-column align-items-start me-4">
+                <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addItemModal">Add Item</button>
+                <button class="btn btn-secondary mb-2">Edit Item</button>
+                <button class="btn btn-danger mb-2">Remove Item</button>
+                <button class="btn btn-success mb-2">Save</button>
+                <button class="btn btn-info mb-2">Export</button>
+                <button class="btn btn-dark mb-2">Delete</button>
+            </div>
+            <!-- Schedule Items -->
+            <div>
+                <h4>Items in Schedule</h4>
+                {% if items %}
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <td>{{ item.item_name }}</td>
+                                    <td>{{ item.get_type_display }}</td>
+                                    <td>{{ item.notes }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No items in this schedule yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</div>
+{% include "partials/add-item-modal.html" %}
+
+{% endblock %}
