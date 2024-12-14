@@ -18,9 +18,19 @@
                                 data-item-id="{{ item.id }}"
                                 data-item-name="{{ item.item_name }}"
                                 data-item-type="{{ item.type }}"
-                                data-item-notes="{{ item.notes }}">
-                                Edit
-                            </button>
+                                data-item-notes="{{ item.notes }}"
+                                data-occurrences='[
+                                    {% for occurrence in item.occurrences.all %}
+                                    {
+                                        "days": [{% for day in occurrence.days_of_week.all %}"{{ day.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+                                        "start_time": "{{ occurrence.start_time }}",
+                                        "end_time": "{{ occurrence.end_time }}"
+                                    }
+                                    {% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                ]'>
+                            Edit
+                        </button>                      
                         </li>
                     {% empty %}
                         <li class="list-group-item">No items available to edit.</li>

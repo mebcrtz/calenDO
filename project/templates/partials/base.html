@@ -38,6 +38,53 @@
             });
         });
     </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editButtons = document.querySelectorAll('.edit-item-button');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Extract item details
+                const itemId = this.dataset.itemId;
+                const itemName = this.dataset.itemName;
+                const itemType = this.dataset.itemType;
+                const itemNotes = this.dataset.itemNotes;
+                const occurrences = JSON.parse(this.dataset.occurrences);
+
+                // Populate the modal fields
+                document.getElementById('editItemDetailsId').value = itemId;
+                document.getElementById('editItemName').value = itemName;
+                document.getElementById('editItemType').value = itemType;
+                document.getElementById('editItemNotes').value = itemNotes;
+
+                // Clear previous occurrences
+                const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                days.forEach(day => {
+                    const checkbox = document.getElementById(`day${day}`);
+                    if (checkbox) checkbox.checked = false;
+                });
+
+                // Populate occurrences
+                if (occurrences.length > 0) {
+                    const occurrence = occurrences[0]; // Assuming one occurrence for now
+                    occurrence.days.forEach(day => {
+                        const checkbox = document.getElementById(`day${day}`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                    document.getElementById('startTime').value = occurrence.start_time; // Ensure time format is HH:mm
+                    document.getElementById('endTime').value = occurrence.end_time;   // Ensure time format is HH:mm
+                }
+
+                // Show the modal
+                const editItemDetailsModal = new bootstrap.Modal(document.getElementById('editItemDetailsModal'));
+                editItemDetailsModal.show();
+                console.log(occurrences);
+            });
+        });
+    });
+</script>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const selectButtons = document.querySelectorAll('.select-remove-item');

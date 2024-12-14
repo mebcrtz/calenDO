@@ -116,6 +116,8 @@ def create_schedule(request):
         return render(request, "create_schedule.html")
     
 def add_schedule_item(request, schedule_name):
+    print("update_item_details function called")
+
     if request.method == "POST":
         schedule = get_object_or_404(Schedule, slug=schedule_name, user=request.user)
 
@@ -156,49 +158,36 @@ def add_schedule_item(request, schedule_name):
 
 
 
-def update_item_details(request, schedule_name, pk):
-    # Get the schedule and the item
-    schedule = get_object_or_404(Schedule, slug=schedule_name)
-    item = get_object_or_404(Item, pk=pk, schedule=schedule)
-
-    if request.method == "POST":
-        item_name = request.POST.get("itemName")
-        item_type = request.POST.get("itemType")
-        item_notes = request.POST.get("notes", "")
-
-        # Validate item name
-        if not item_name:
-            messages.error(request, "Item name cannot be empty!")
-            return redirect("schedule_detail", schedule_name=schedule.slug)
+def update_item_details(request):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        item = get_object_or_404(Item, id=item_id)
 
         # Update item fields
-        item.item_name = item_name
-        item.type = item_type
-        item.notes = item_notes
+        item.item_name = request.POST.get('itemName')
+        item.type = request.POST.get('itemType')
+        item.notes = request.POST.get('notes')
         item.save()
 
-        # Clear existing occurrences
-        item.occurrences.all().delete()
+        # Update occurrences
+        item.occurrences.all().delete()  # Clear existing occurrences
+        days = request.POST.getlist('days[]')
+        start_time = request.POST.get('startTime')
+        end_time = request.POST.get('endTime')
 
-        # Add new occurrences
-        days = request.POST.getlist("days[]")
-        start_times = request.POST.getlist("startTime[]")
-        end_times = request.POST.getlist("endTime[]")
-
-        for start_time, end_time in zip(start_times, end_times):
+        if days and start_time and end_time:
             occurrence = ItemOccurrence.objects.create(
                 item=item,
                 start_time=start_time,
                 end_time=end_time
             )
-            for day_name in days:
-                day_of_week, _ = DayOfWeek.objects.get_or_create(name=day_name)
+            for day in days:
+                day_of_week, _ = DayOfWeek.objects.get_or_create(name=day)
                 occurrence.days_of_week.add(day_of_week)
 
-        messages.success(request, "Item updated successfully!")
-        return redirect("schedule_detail", schedule_name=schedule.slug)
+        messages.success(request, 'Item updated successfully!')
+    return redirect("schedule_detail", schedule_name=item.schedule.slug)
 
-    return redirect("schedule_detail", schedule_name=schedule.slug)
 
 def remove_schedule_item(request, pk):
     item = get_object_or_404(Item, pk=pk, schedule__user=request.user)
