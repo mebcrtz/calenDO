@@ -36,9 +36,16 @@
                     <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addItemModal">Add Item</button>
                     <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#editItemModal">Edit Item</button>
                     <button class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#selectItemToRemoveModal">Remove Item</button>
-                    <button class="btn btn-success mb-2">Save</button>
+                    <!-- <button class="btn btn-success mb-2">Save</button> -->
                     <button class="btn btn-info mb-2">Export</button>
-                    <button class="btn btn-dark mb-2">Delete</button>
+                    <button 
+                        class="btn btn-dark mb-2 delete-schedule-button" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#deleteScheduleModal"
+                        data-schedule-slug="{{ schedule.slug }}"
+                        data-schedule-name="{{ schedule.schedule_name }}">
+                        Delete
+                    </button>
                 </div>
                 <!-- Schedule Items -->
                 <div>
@@ -96,5 +103,6 @@
 {% include "partials/edit-selected-item-modal.html" %}
 {% include "partials/remove-item-modal.html" %}
 {% include "partials/confirm-remove-item-modal.html" %}
+{% include "partials/confirm-schedule-delete-modal.html" %}
 
 {% endblock %}

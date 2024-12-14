@@ -59,5 +59,26 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.delete-schedule-button');
+            const deleteForm = document.getElementById('deleteScheduleForm');
+            const scheduleNameField = document.getElementById('scheduleToDeleteName');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const scheduleSlug = button.getAttribute('data-schedule-slug'); // Get the schedule's slug
+                    const scheduleName = button.getAttribute('data-schedule-name'); // Get the schedule's name
+
+                    // Update modal content
+                    scheduleNameField.textContent = scheduleName;
+
+                    // Update form action
+                    deleteForm.setAttribute('action', `/calendar/${scheduleSlug}/delete/`);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

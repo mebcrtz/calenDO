@@ -205,3 +205,14 @@ def remove_schedule_item(request, pk):
         messages.success(request, "Item removed successfully!")
         return redirect("schedule_detail", schedule_name=schedule_name)
     return redirect("schedule_detail", schedule_name=item.schedule.slug)
+
+
+def delete_schedule(request, schedule_name):
+    if request.method == "POST":
+        schedule = get_object_or_404(Schedule, slug=schedule_name, user=request.user)
+        schedule.delete()  # This will delete the schedule and its related items if relationships are properly defined
+        messages.success(request, f"The schedule '{schedule.schedule_name}' has been deleted.")
+        return redirect("calendar_index")  # Redirect to the main calendar view
+    else:
+        messages.error(request, "Invalid request method.")
+        return redirect("calendar_index")
