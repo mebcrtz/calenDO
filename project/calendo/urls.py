@@ -9,10 +9,9 @@ urlpatterns = [
     path('todo/update-task/', views.update_task, name='update_task'),
 
     path('calendar/', views.calendar_index, name='calendar_index'),
-    path('schedule/<int:pk>/', views.schedule_detail, name='schedule_detail'),
-    path('schedules/', views.schedule_list, name='schedule_list'),
+    path('calendar/<int:pk>/', views.calendar_index, name='schedule_detail'),
+    # path('schedules/', views.schedule_list, name='schedule_list'),
     path('create-schedule/', views.create_schedule, name='create_schedule'),
     path('schedule/<int:pk>/add-item/', views.add_schedule_item, name='add_schedule_item'),
-    path('schedule/<int:pk>/update-item/', views.update_item, name='update_item'),
-    path('schedule/item/<int:pk>/update/', views.update_item, name='update_item'),
+    path('schedule/item/<int:pk>/update/', views.update_item_details, name='update_item_details'),
 ]

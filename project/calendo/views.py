@@ -69,32 +69,30 @@ def update_task(request):
 
 '''CALENDAR VIEWS'''
 
-def calendar_index(request):
+def calendar_index(request, pk=None):
     schedules = Schedule.objects.filter(user=request.user)
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    return render(request, "calendar/calendar-index.html", {"schedules": schedules})
-
-def schedule_detail(request, pk):
-    schedule = get_object_or_404(Schedule, pk=pk, user=request.user)
-    schedules = Schedule.objects.filter(user=request.user)  # For sidebar
-    items = schedule.items.prefetch_related('occurrences__days_of_week')  # Prefetch occurrences and days
-    days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    
+    # Determine the schedule to display (first schedule by default or based on `pk`)
+    schedule = schedules.first() if pk is None else get_object_or_404(Schedule, pk=pk, user=request.user)
+    items = schedule.items.prefetch_related('occurrences__days_of_week') if schedule else []
 
     # Prepare occurrences with days
     for item in items:
         for occurrence in item.occurrences.all():
             occurrence.days = [day.name for day in occurrence.days_of_week.all()]  # Preprocess days as a list of names
 
-    return render(request, "calendar/schedule-detail.html", {
-        "schedule": schedule,
+    return render(request, "calendar/calendar-index.html", {
         "schedules": schedules,
+        "schedule": schedule,
         "items": items,
         "days_of_week": days_of_week,
     })
 
-def schedule_list(request):
-    schedules = Schedule.objects.filter(user=request.user)
-    return render(request, "schedule-list.html", {"schedules": schedules})
+
+# def schedule_list(request):
+#     schedules = Schedule.objects.filter(user=request.user)
+#     return render(request, "schedule-list.html", {"schedules": schedules})
 
 def create_schedule(request):
     if request.method == "POST":
@@ -150,22 +148,6 @@ def add_schedule_item(request, pk):
 
     return redirect("schedule_detail", pk=pk)
 
-def update_item(request, pk):
-    item = get_object_or_404(Item, id=pk)
-    if request.method == "POST":
-        item_name = request.POST.get("itemName")
-        item_type = request.POST.get("item_type")
-        item_notes = request.POST.get("item_notes")
-
-        # Update the item fields
-        item.item_name = item_name
-        item.type = item_type
-        item.notes = item_notes
-        item.save()
-
-        messages.success(request, "Item updated successfully!")
-        return redirect("schedule_detail", pk=item.schedule.id)
-    return redirect("schedule_detail", pk=item.schedule.id)
 
 def update_item_details(request, pk):
     item = get_object_or_404(Item, pk=pk)
