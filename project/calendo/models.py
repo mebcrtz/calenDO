@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.postgres.fields import ArrayField
+from django.utils.text import slugify
+
 # Create your models here.
 
 
@@ -35,6 +36,12 @@ class Schedule(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="schedules")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.schedule_name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.schedule_name

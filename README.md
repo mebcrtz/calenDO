@@ -18,7 +18,10 @@
           > (if error ERROR: Could not install packages due to an OSError: [WinError 2] )
           > type `pip install --user -r requirements.txt`
 - Open project in code editor
-  > type `code .`
+  > type `code .` in command prompt
+
+- Create superuser
+  > type `python manage.py createsuperuser` in vscdoe terminal
 
 > [!NOTE]
 > Go back to your terminal (command prompt).

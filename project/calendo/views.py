@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from datetime import time
 from django.contrib import messages
+from django.utils.text import slugify
 
 from .forms import *
 from .models import *
@@ -68,13 +69,13 @@ def update_task(request):
 
 
 '''CALENDAR VIEWS'''
-
-def calendar_index(request, pk=None):
+def calendar_index(request, schedule_name=None):
     schedules = Schedule.objects.filter(user=request.user)
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     
-    # Determine the schedule to display (first schedule by default or based on `pk`)
-    schedule = schedules.first() if pk is None else get_object_or_404(Schedule, pk=pk, user=request.user)
+    # Determine the schedule to display (first schedule by default or based on `schedule_name`)
+    first_schedule = schedules.first()
+    schedule = first_schedule if schedule_name is None else get_object_or_404(Schedule, slug=schedule_name, user=request.user)
     items = schedule.items.prefetch_related('occurrences__days_of_week') if schedule else []
 
     # Prepare occurrences with days
@@ -85,10 +86,10 @@ def calendar_index(request, pk=None):
     return render(request, "calendar/calendar-index.html", {
         "schedules": schedules,
         "schedule": schedule,
+        "first_schedule": first_schedule,
         "items": items,
         "days_of_week": days_of_week,
     })
-
 
 # def schedule_list(request):
 #     schedules = Schedule.objects.filter(user=request.user)
