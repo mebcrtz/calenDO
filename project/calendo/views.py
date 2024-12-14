@@ -153,22 +153,22 @@ def add_schedule_item(request, schedule_name):
 
 
 
-def update_item_details(request, pk):
-    item = get_object_or_404(Item, pk=pk)
+def update_item_details(request, schedule_name, pk):
+    # Get the schedule and the item
+    schedule = get_object_or_404(Schedule, slug=schedule_name)
+    item = get_object_or_404(Item, pk=pk, schedule=schedule)
 
     if request.method == "POST":
-        # Debugging: Print the POST data
-        print(request.POST)
-
         item_name = request.POST.get("itemName")
         item_type = request.POST.get("itemType")
         item_notes = request.POST.get("notes", "")
 
-        if not item_name:  # Check if the item name is empty
+        # Validate item name
+        if not item_name:
             messages.error(request, "Item name cannot be empty!")
-            return redirect("schedule_detail", pk=item.schedule.id)
+            return redirect("schedule_detail", schedule_name=schedule.slug)
 
-        # Update the Item fields
+        # Update item fields
         item.item_name = item_name
         item.type = item_type
         item.notes = item_notes
@@ -193,9 +193,9 @@ def update_item_details(request, pk):
                 occurrence.days_of_week.add(day_of_week)
 
         messages.success(request, "Item updated successfully!")
-        return redirect("schedule_detail", pk=item.schedule.id)
+        return redirect("schedule_detail", schedule_name=schedule.slug)
 
-    return redirect("schedule_detail", pk=item.schedule.id)
+    return redirect("schedule_detail", schedule_name=schedule.slug)
 
 def remove_schedule_item(request, pk):
     item = get_object_or_404(Item, pk=pk, schedule__user=request.user)

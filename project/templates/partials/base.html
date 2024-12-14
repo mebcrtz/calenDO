@@ -16,23 +16,24 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Add event listeners to the "Edit" buttons in the item list
             const editButtons = document.querySelectorAll('.edit-item-button');
+
             editButtons.forEach(button => {
                 button.addEventListener('click', function () {
-                    const itemId = this.getAttribute('data-item-id');
-                    const itemName = this.getAttribute('data-item-name');
-                    const itemType = this.getAttribute('data-item-type');
-                    const itemNotes = this.getAttribute('data-item-notes');
-    
-                    // Populate the Edit Item Details Modal with the item's data
+                    const itemId = this.dataset.itemId;
+                    const itemName = this.dataset.itemName;
+                    const itemType = this.dataset.itemType;
+                    const itemNotes = this.dataset.itemNotes;
+                    const scheduleName = "{{ schedule.slug }}"; // Use the current schedule's slug
+
+                    // Populate form fields
                     document.getElementById('editItemId').value = itemId;
                     document.getElementById('editItemName').value = itemName;
-                    document.getElementById('editItemType').value = itemType;
-                    document.getElementById('editItemNotes').value = itemNotes;
-    
-                    // Set the form action dynamically
-                    document.getElementById('editItemForm').action = `/schedule/${itemId}/update-item/`;
+                    document.getElementById(itemType === 'event' ? 'editEvent' : 'editClass').checked = true;
+                    document.getElementById('editNotes').value = itemNotes;
+
+                    // Set form action dynamically
+                    document.getElementById('editItemForm').action = `/schedule/${scheduleName}/item/${itemId}/update/`;
                 });
             });
         });
