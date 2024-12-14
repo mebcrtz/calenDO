@@ -28,7 +28,7 @@
         width: 20%;
         background-color: white;
         padding: 1rem;
-        border-radius: 10px;
+        border-radius: 20px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
     .sidebar h3 {
@@ -70,7 +70,7 @@
         margin-top: 20px;
         height: 78vh;
         background-color: white;
-        border-radius: 10px;
+        border-radius: 20px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
     .content-header {
@@ -78,28 +78,45 @@
         margin-bottom: 1.5rem;
         background: linear-gradient(#71AEFF, #023D8A);
         padding: 60px;
-        border-radius: 10px;
+        border-radius: 20px;
     }
     .content-header h2 {
         color: white;
     }
-    .search-bar input {
+    .search-bar {
+        position: relative;
         width: 50%;
-        padding: 0.5rem;
-        margin-top: 0.5rem;
+        margin: 0 auto;
+    }
+    .search-bar input {
+        width: 100%;
+        padding: 0.5rem 1rem 0.5rem 2.5rem; /* Add padding to the left for the icon */
+        margin-top: 0.2rem;
         border: 1px solid #ccc;
         border-radius: 10px;
+    }
+    .search-bar input::placeholder {
+        padding-left: 8px; /* Add left padding to the placeholder text */
+    }
+    .search-bar::before {
+        content: "\1F50D"; /* Unicode for magnifying glass */
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        color: #ff;
     }
 
     /* Schedule Box */
     .schedule-box {
         background-color: #f1f1f1;
         border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 5rem;
+        border-radius: 20px;
+        padding: 3.5rem;
         margin-left: 3rem;
-        width: 30vh;
-        height: 29vh;
+        width: 25vh;
+        height: 20vh;
         margin-bottom: 1rem;
         align-items: center;
         justify-content: center;
