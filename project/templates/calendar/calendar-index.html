@@ -37,7 +37,12 @@
                     <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#editItemModal">Edit Item</button>
                     <button class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#selectItemToRemoveModal">Remove Item</button>
                     <!-- <button class="btn btn-success mb-2">Save</button> -->
-                    <button class="btn btn-info mb-2">Export</button>
+                    <button 
+                        class="btn btn-info mb-2" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#exportScheduleModal">
+                        Export
+                    </button>
                     <button 
                         class="btn btn-dark mb-2 delete-schedule-button" 
                         data-bs-toggle="modal" 
@@ -104,5 +109,6 @@
 {% include "partials/remove-item-modal.html" %}
 {% include "partials/confirm-remove-item-modal.html" %}
 {% include "partials/confirm-schedule-delete-modal.html" %}
+{% include "partials/export-schedule-modal.html" %}
 
 {% endblock %}

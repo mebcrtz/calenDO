@@ -80,5 +80,20 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const exportOptions = document.querySelectorAll('.export-option');
+
+            exportOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const fileType = option.getAttribute('data-file-type');
+                    const scheduleSlug = "{{ schedule.slug }}"; // Get the current schedule slug dynamically
+                    const exportUrl = `/calendar/${scheduleSlug}/export/${fileType}/`;
+                    window.location.href = exportUrl; // Redirect to the export URL
+                });
+            });
+        });
+    </script>
 </body>
 </html>

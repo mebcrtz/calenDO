@@ -1,9 +1,12 @@
+import io
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from datetime import time
 from django.contrib import messages
 from django.utils.text import slugify
 from django.urls import reverse
+from reportlab.pdfgen import canvas
+from PIL import Image, ImageDraw, ImageFont
 
 from .forms import *
 from .models import *
@@ -216,3 +219,44 @@ def delete_schedule(request, schedule_name):
     else:
         messages.error(request, "Invalid request method.")
         return redirect("calendar_index")
+
+def export_schedule(request, schedule_name, file_type):
+    schedule = get_object_or_404(Schedule, slug=schedule_name, user=request.user)
+    items = schedule.items.all()
+
+    if file_type == 'pdf':
+        # Generate a PDF
+        buffer = io.BytesIO()
+        from reportlab.pdfgen import canvas
+        p = canvas.Canvas(buffer)
+        p.drawString(100, 800, f"Schedule: {schedule.schedule_name}")
+        y = 780
+        for item in items:
+            p.drawString(100, y, f"{item.item_name}: {item.notes}")
+            y -= 20
+        p.save()
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=f"{schedule.schedule_name}.pdf")
+
+    elif file_type in ['jpg', 'png']:
+        # Map 'jpg' to 'JPEG' for Pillow
+        image_format = 'JPEG' if file_type == 'jpg' else 'PNG'
+
+        # Generate an image
+        img = Image.new('RGB', (800, 600), color=(255, 255, 255))
+        d = ImageDraw.Draw(img)
+        font = ImageFont.load_default()
+        y = 50
+        d.text((10, 10), f"Schedule: {schedule.schedule_name}", fill=(0, 0, 0), font=font)
+        for item in items:
+            d.text((10, y), f"{item.item_name}: {item.notes}", fill=(0, 0, 0), font=font)
+            y += 20
+
+        buffer = io.BytesIO()
+        img.save(buffer, format=image_format)  # Use the mapped format here
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=f"{schedule.schedule_name}.{file_type}")
+
+    else:
+        messages.error(request, "Invalid file type.")
+        return redirect("schedule_detail", schedule_name=schedule_name)

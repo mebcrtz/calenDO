@@ -15,4 +15,6 @@ urlpatterns = [
     path('schedule/<slug:schedule_name>/item/<int:pk>/update/', views.update_item_details, name='update_item_details'),
     path('item/remove/<int:pk>/', views.remove_schedule_item, name='remove_schedule_item'),
     path('calendar/<slug:schedule_name>/delete/', views.delete_schedule, name='delete_schedule'),
+    path('calendar/<slug:schedule_name>/export/<str:file_type>/', views.export_schedule, name='export_schedule'),
+
 ]
