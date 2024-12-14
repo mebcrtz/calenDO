@@ -1,21 +1,12 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-      <a class="navbar-brand" href="#">calenDO</a>
-      <div class="collapse navbar-collapse">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                  <a class="nav-link" href="/">Dashboard</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="/calendar/">Calendar</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="/todo/">To-Do Lists</a>
-              </li>
-          </ul>
-          <form class="d-flex">
-              <input class="form-control me-2" type="search" placeholder="Search in site" aria-label="Search">
-          </form>
-      </div>
-  </div>
-</nav>
+<div class="navbar">
+    <div class="logo">My Planner</div>
+    <div class="nav-links">
+        <a href="{% url 'calendo-dashboard' %}">Dashboard</a>
+        <a href="{% url 'calendar_index' %}">Calendar</a>
+        <a href="{% url 'todo_index' %}">To-Do Lists</a>
+    </div>
+    <div class="search">
+        <input type="text" placeholder="Search in site">
+        <button>Search</button>
+    </div>
+</div>

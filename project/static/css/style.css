@@ -1,124 +1,134 @@
 body {
-    margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-}
-
-.app-header {
+    margin: 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    background-color: #002855;
-    color: white;
-    padding: 10px 20px;
+    min-height: 100vh;
+    background-color: #f5f5f5;
 }
-
-.logo {
+.container {
+    display: flex;
+    max-width: 1000px;
+    width: 100%;
+    margin-right: 30px;
+    margin-left: 5px;
+    align-items: flex-start;
+}
+.left {
+    background: #0a2a66;
+    color: white;
+    padding: 93px;
+    margin-right: 20%;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 50%;
+}
+.left img {
+    width: 300px;
+    margin-bottom: 20px;
+}
+.left h2 {
+    margin-bottom: 20px;
+}
+.left p {
+    text-align: left;
+    line-height: 1.6;
+}
+.right {
+    margin-left: 10px; /* Add some spacing between the sections */
+    width: 50%;
+}
+.right h1 {
     font-size: 24px;
-    font-weight: bold;
+    margin-bottom: 20px;
 }
-
-.nav-bar {
-    display: flex;
-    gap: 15px;
-    align-items: center;
+.form-group {
+    margin-bottom: 20px;
 }
-
-.nav-bar a {
-    color: white;
-    text-decoration: none;
-}
-
-.nav-bar .search-bar {
-    padding: 5px;
-    border-radius: 4px;
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
     border: none;
+    border-bottom: 2px solid #0a2a66;
+    border-radius: 0;
+    background-color: transparent;
+    color: #0a2a66;
 }
-
-.app-container {
+.form-group button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background: #0a2a66;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.form-group input::placeholder {
+    color: #0a2a66; /* Set placeholder color */
+}
+.form-group button:hover {
+    background: #0944a8;
+}
+.or {
+    text-align: center;
+    margin: 20px 0;
+}
+.alt-signup {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    gap: 10px;
 }
-
-.main-container {
-    display: flex;
-    flex: 1;
-}
-
-.sidebar {
-    background-color: #f1f1f1;
-    width: 20%;
-    padding: 20px;
-    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar .btn {
-    display: block;
-    background-color: #002855;
-    color: white;
-    border: none;
-    padding: 10px;
+.alt-signup button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #eaeaea;
+    border: 1px solid #ccc;
     border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 20px;
-}
-
-.schedule-section {
-    flex: 1;
-    padding: 20px;
-    background-color: white;
-}
-
-.schedule-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.schedule-title {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.settings-btn {
-    background-color: #002855;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.schedule-grid table {
     width: 100%;
-    border-collapse: collapse;
 }
-
-.schedule-grid th, .schedule-grid td {
-    border: 1px solid #ddd;
-    padding: 10px;
+.alt-signup button:hover {
+    background: #ddd;
+}
+.signin-link {
     text-align: center;
-}
-
-.schedule-grid th {
-    background-color: #f1f1f1;
-}
-
-.button-group {
-    display: flex;
-    gap: 10px;
     margin-top: 20px;
 }
-
-.button-group button {
-    background-color: #002855;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
+.signin-link a {
+    color: #0a2a66;
+    text-decoration: none;
+}
+.signin-link a:hover {
+    text-decoration: underline;
+}
+.center-align {
+    text-align: center;
+    color: #0a2a66;
+    font-size: 3em; /* Adjust the size as needed */
+    font-weight: bold; /* Make the text bold */
+}
+.or-line {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+    color: #0a2a66;
+    margin-top: 50px;
+}
+.or-line::before,
+.or-line::after {
+    content: '';
+    flex: 1;
+    border-bottom: 3px solid #000;
+    margin-right: 20px;
+    margin-left: 30px;
+}
+.or-line:not(:empty)::before {
+    margin-right: .50em;
+}
+.or-line:not(:empty)::after {
+    margin-left: .50em;
 }
