@@ -86,7 +86,7 @@ def calendar_index(request, schedule_name=None):
     return render(request, "calendar/calendar-index.html", {
         "schedules": schedules,
         "schedule": schedule,
-        "first_schedule": first_schedule,
+        "first_schedule": first_schedule,    
         "items": items,
         "days_of_week": days_of_week,
     })
@@ -96,7 +96,7 @@ def calendar_index(request, schedule_name=None):
 #     return render(request, "schedule-list.html", {"schedules": schedules})
 
 def create_schedule(request):
-    if request.method == "POST":
+    if request.method == "POST":   
         schedule_name = request.POST.get("schedule_name")
         if schedule_name:
             Schedule.objects.create(
