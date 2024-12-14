@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from datetime import time
 from django.contrib import messages
 from django.utils.text import slugify
+from django.urls import reverse
 
 from .forms import *
 from .models import *
@@ -111,9 +112,9 @@ def create_schedule(request):
         # Render a form page if accessed via GET
         return render(request, "create_schedule.html")
     
-def add_schedule_item(request, pk):
+def add_schedule_item(request, schedule_name):
     if request.method == "POST":
-        schedule = get_object_or_404(Schedule, pk=pk, user=request.user)
+        schedule = get_object_or_404(Schedule, slug=schedule_name, user=request.user)
 
         # Get form data
         item_name = request.POST.get("itemName")
@@ -145,9 +146,11 @@ def add_schedule_item(request, pk):
                 occurrence.days_of_week.add(day_of_week)
 
         messages.success(request, "Item added successfully!")
-        return redirect("schedule_detail", pk=pk)
+        return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
-    return redirect("schedule_detail", pk=pk)
+
+    return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
+
 
 
 def update_item_details(request, pk):
@@ -192,4 +195,12 @@ def update_item_details(request, pk):
         messages.success(request, "Item updated successfully!")
         return redirect("schedule_detail", pk=item.schedule.id)
 
+    return redirect("schedule_detail", pk=item.schedule.id)
+
+def remove_schedule_item(request, pk):
+    item = get_object_or_404(Item, pk=pk, schedule__user=request.user)
+    if request.method == "POST":
+        item.delete()
+        messages.success(request, "Item removed successfully!")
+        return redirect("schedule_detail", pk=item.schedule.id)
     return redirect("schedule_detail", pk=item.schedule.id)

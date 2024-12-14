@@ -11,6 +11,7 @@ urlpatterns = [
     path('calendar/', views.calendar_index, name='calendar_index'),
     path('calendar/<slug:schedule_name>/', views.calendar_index, name='schedule_detail'),
     path('create-schedule/', views.create_schedule, name='create_schedule'),
-    path('schedule/<int:pk>/add-item/', views.add_schedule_item, name='add_schedule_item'),
+    path('schedule/<slug:schedule_name>/add-item/', views.add_schedule_item, name='add_schedule_item'),
     path('schedule/item/<int:pk>/update/', views.update_item_details, name='update_item_details'),
+    path('item/remove/<int:pk>/', views.remove_schedule_item, name='remove_schedule_item'),
 ]

@@ -37,5 +37,26 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectButtons = document.querySelectorAll('.select-remove-item');
+            const removeForm = document.getElementById('removeItemForm');
+            const itemToRemoveName = document.getElementById('itemToRemoveName');
+    
+            selectButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const itemId = button.getAttribute('data-item-id');
+                    const itemName = button.getAttribute('data-item-name');
+                    
+                    // Update the confirmation modal
+                    itemToRemoveName.textContent = itemName;
+    
+                    // Update the form action
+                    const actionUrl = `{% url 'remove_schedule_item' 0 %}`.replace('0', itemId);
+                    removeForm.setAttribute('action', actionUrl);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body">
                 {% if schedule %}
-                    <form id="addItemForm" method="POST" action="{% url 'add_schedule_item' schedule.id %}">
+                    <form id="addItemForm" method="POST" action="{% url 'add_schedule_item' schedule_name=schedule.slug %}">
                         {% csrf_token %}
                         <div class="btn-group w-100 mb-3" role="group" aria-label="Event or Class">
                             <input type="radio" class="btn-check" name="itemType" id="event" value="event" autocomplete="off" checked>
