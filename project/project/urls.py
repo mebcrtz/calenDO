@@ -23,7 +23,7 @@ urlpatterns = [
     path('', views.dashboard, name='calendo-dashboard'),  # Ensure this line is present
     path('todo/', views.todo_index, name='todo_index'),
     path('todo/create-task/', views.create_task, name='create_task'),
-    path('calendar/', views.calendar_index, name='calendar_index'),
+    path('calendar/', views.calendar, name='calendar'),
     path('signup/', views.signup, name='signup'),
     path('accounts/', include('django.contrib.auth.urls')),  # Ensure this line is present
 ]

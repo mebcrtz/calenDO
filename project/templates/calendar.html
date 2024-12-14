@@ -1,88 +1,136 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>My Planner - Calendar</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            background-color: #003366;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-        }
-        .container {
-            display: flex;
-        }
-        .sidebar {
-            width: 20%;
-            padding: 1rem;
-            background-color: #f4f4f4;
-        }
-        .content {
-            width: 80%;
-            padding: 1rem;
-        }
-        .schedule-card {
-            background-color: #e3e3e3;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 5px;
-        }
-        .search-bar input {
-            width: 100%;
-            padding: 0.5rem;
-        }
-        .button {
-            padding: 0.5rem 1rem;
-            background-color: #003366;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>My Planner</h1>
-        <p>Let's Get Ready For the Week!</p>
+{% extends "partials/base.html" %}
+
+{% block content %}
+<style>
+    /* General Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+    body {
+        background-color: #f8f9fa;
+    }
+    a {
+        text-decoration: none;
+    }
+
+    /* Main Container */
+    .main-container {
+        display: flex;
+        padding: 2rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        margin-top: 20px;
+        width: 20%;
+        background-color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar h3 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    .create-btn {
+        display: inline-block;
+        background-color: #003366;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    .recent-schedules {
+        list-style: none;
+    }
+    .recent-schedules li {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        background-color: #e3e3e3;
+        border-radius: 3px;
+        color: #555;
+    }
+    .see-all {
+        color: #003366;
+        display: block;
+        margin-top: 1rem;
+    }
+
+    /* Main Content */
+    .content {
+        flex: 1;
+        margin-left: 2rem;
+        margin-top: 20px;
+        height: 78vh;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .content-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(#71AEFF, #023D8A);
+        padding: 60px;
+        border-radius: 10px;
+    }
+    .content-header h2 {
+        color: white;
+    }
+    .search-bar input {
+        width: 50%;
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+    }
+
+    /* Schedule Box */
+    .schedule-box {
+        background-color: #f1f1f1;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 5rem;
+        margin-left: 3rem;
+        width: 30vh;
+        height: 29vh;
+        margin-bottom: 1rem;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+    }
+</style>
+
+<!-- Main Container -->
+<div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>calen<span style="color: #003366; font-weight: bold;">DO</span></h3>
+        <a href="#" class="create-btn">+ Create New Schedule</a>
+        <h4>Recent Schedules</h4>
+        <ul class="recent-schedules">
+            <li>Schedule 1</li>
+            <li>Schedule 2</li>
+            <li>Schedule 3</li>
+        </ul>
+        <a href="#" class="see-all">See All</a>
     </div>
 
-    <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <h3>Recent Schedules</h3>
-            <ul>
-                {% for event in events %}
-                    <li>{{ event.title }}</li>
-                {% empty %}
-                    <li>No schedules yet.</li>
-                {% endfor %}
-            </ul>
-            <a href="#" class="button">Create New Schedule</a>
-        </div>
-
-        <!-- Main Content -->
-        <div class="content">
+    <!-- Content -->
+    <div class="content">
+        <div class="content-header">
+            <h2>Let's Get Ready For the Week!</h2>
             <div class="search-bar">
                 <input type="text" placeholder="Search your schedules">
             </div>
-            <h2>This Week's Schedules</h2>
-            {% for event in events %}
-                <div class="schedule-card">
-                    <h3>{{ event.title }}</h3>
-                    <p><strong>Date:</strong> {{ event.date }}</p>
-                    <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
-                    <p>{{ event.description }}</p>
-                </div>
-            {% empty %}
-                <p>No schedules available for this week.</p>
-            {% endfor %}
+        </div>
+        <!-- Placeholder for Schedules -->
+        <div class="schedule-box">
+            Schedule Placeholder
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

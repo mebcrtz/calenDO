@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, authenticate
-from .models import Task, Schedule
+from .models import Task, Schedule, Event
 from .forms import TaskForm
 
 def signup(request):
@@ -63,3 +63,10 @@ def create_task(request):
 def calendar_index(request):
     schedules = Schedule.objects.filter(user=request.user)
     return render(request, 'calendar/calendar-index.html', {'schedules': schedules})
+
+from django.shortcuts import render
+from .models import Event
+
+def calendar(request):
+    events = Event.objects.all()
+    return render(request, 'calendar.html', {'events': events})

@@ -9,6 +9,6 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('todo/', views.todo_index, name='todo_index'),
     path('todo/create-task/', views.create_task, name='create_task'),
-    path('calendar/', views.calendar_index, name='calendar_index'),
+    path('calendar/', views.calendar, name='calendar'),
     path('accounts/', include('django.contrib.auth.urls')),
 ]
