@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login as auth_login, authenticate
 from .models import Task, Schedule
 from .forms import TaskForm
 
@@ -11,11 +11,25 @@ def signup(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            auth_login(request, user)
             return redirect('calendo-dashboard')
     else:
         form = UserCreationForm()
-    return render(request, 'registration/signup.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
+
+def login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                auth_login(request, user)
+                return redirect('calendo-dashboard')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
 
 def dashboard(request):
     # Your dashboard logic here
