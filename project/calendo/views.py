@@ -200,7 +200,8 @@ def update_item_details(request, schedule_name, pk):
 def remove_schedule_item(request, pk):
     item = get_object_or_404(Item, pk=pk, schedule__user=request.user)
     if request.method == "POST":
+        schedule_name = item.schedule.slug
         item.delete()
         messages.success(request, "Item removed successfully!")
-        return redirect("schedule_detail", pk=item.schedule.id)
-    return redirect("schedule_detail", pk=item.schedule.id)
+        return redirect("schedule_detail", schedule_name=schedule_name)
+    return redirect("schedule_detail", schedule_name=item.schedule.slug)
