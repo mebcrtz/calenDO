@@ -305,10 +305,7 @@
             },
             firstDay: 1, // Set the first day of the week to Monday
             allDaySlot: false, // Remove the all-day row
-            events: {{ events|safe }},
-            dateClick: function(info) {
-                alert('Clicked on: ' + info.dateStr);
-            }
+            events: {{ events|safe }}
         });
         calendar.render();
     });
