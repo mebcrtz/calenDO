@@ -1,5 +1,5 @@
 <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg-custom">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addTaskModalLabel">Add Another Task</h5>
@@ -14,25 +14,33 @@
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        <input type="text" class="form-control" id="description" name="description">
                     </div>
                     <div class="mb-3">
-                        <label for="section" class="form-label">Section</label>
-                        <input type="text" class="form-control" id="section" name="section" required>
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label for="priority" class="form-label">Priority</label>
-                        <select class="form-select" id="priority" name="priority">
-                            <option value="Priority 1">Priority 1</option>
-                            <option value="Priority 2">Priority 2</option>
-                            <option value="Priority 3">Priority 3</option>
-                        </select>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="dueDate" class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="dueDate" name="due_date" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="section" class="form-label">Section</label>
+                            <input type="text" class="form-control" id="section" name="section" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="priority" class="form-label">Priority</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="Priority 1">Priority 1</option>
+                                <option value="Priority 2">Priority 2</option>
+                                <option value="Priority 3">Priority 3</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="dueDate" class="form-label">Due Date</label>
-                        <input type="date" class="form-control" id="dueDate" name="due_date" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Save</button>
+                    <button type="submit" class="btn btn-primary btn-sm float-end save-btn">
+                        <i class="fas fa-save"></i> Save
+                    </button>
                 </form>
             </div>
         </div>

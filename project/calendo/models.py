@@ -3,31 +3,17 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 # Create your models here.
 
-
 class Task(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    task_name = models.CharField(max_length=200)
-    description = models.TextField(null=True, blank=True)
-    status = models.BooleanField(default=False)
-    section = models.CharField(max_length=200, null=True, blank=True)
-    priority = models.CharField(max_length=200, null=True, blank=True)
-    due_date = models.DateTimeField(null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.task_name
-    
-    class Meta:
-        ordering = ['status']
-
+    task_name = models.CharField(max_length=255)
+    description = models.TextField()
+    due_date = models.DateField()
+    section = models.CharField(max_length=255)
+    priority = models.CharField(max_length=50)
 
 class Note(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='notes')
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Note for {self.task.task_name} at {self.timestamp}"
 
 
 class Schedule(models.Model):

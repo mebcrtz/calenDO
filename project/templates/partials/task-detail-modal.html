@@ -1,43 +1,44 @@
 <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="taskDetailModalLabel">Task Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="taskDetailForm" method="post" action="{% url 'update_task' %}">
+                <form id="taskDetailForm" method="post" action="{% url 'add_note' %}">
                     {% csrf_token %}
                     <input type="hidden" id="modalTaskId" name="task_id">
-                    <div class="mb-3">
-                        <label for="modalTaskName" class="form-label">Task Name</label>
-                        <input type="text" class="form-control" id="modalTaskName" name="task_name" required>
+                    <div class="mb-1">
+                        <h3 id="modalTaskName" class="form-control-plaintext" style="font-size: 1.75rem;"></h3>
+                    </div>
+                    <div class="mb-1">
+                        <p id="modalTaskDescription" class="form-control-plaintext"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="modalTaskDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="modalTaskDescription" name="description" rows="3"></textarea>
-                    </div>
-                    <!-- <div class="mb-3">
-                        <label for="modalTaskNotes" class="form-label">Notes</label>
-                        <textarea class="form-control" id="modalTaskNotes" name="notes" rows="3"></textarea>
-                    </div> -->
-                    <div class="mb-3">
-                        <label for="modalDueDate" class="form-label">Due Date</label>
-                        <input type="date" class="form-control" id="modalDueDate" name="due_date">
+                        <label class="form-label">Notes</label>
+                        <div id="notesList" class="mb-3" style="max-height: 200px; overflow-y: auto;">
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="modalSection" class="form-label">Section</label>
-                        <input type="text" class="form-control" id="modalSection" name="section">
+                        <label for="modalNotes" class="form-label">Add Note</label>
+                        <textarea class="form-control" id="modalNotes" name="notes" rows="3"></textarea>
+                        <div class="d-flex justify-content-end mt-2">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Note</button>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="modalPriority" class="form-label">Priority</label>
-                        <select class="form-select" id="modalPriority" name="priority">
-                            <option value="Priority 1">Priority 1</option>
-                            <option value="Priority 2">Priority 2</option>
-                            <option value="Priority 3">Priority 3</option>
-                        </select>
+                    <div class="d-flex justify-content-between mt-3">
+                        <div>
+                            <strong>Due Date:</strong> <span id="modalDueDate"></span>
+                        </div>
+                        <div>
+                            <strong>Section:</strong> <span id="modalSection"></span>
+                        </div>
+                        <div>
+                            <strong>Priority:</strong> <span id="modalPriority"></span>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Save Changes</button>
                 </form>
             </div>
         </div>
