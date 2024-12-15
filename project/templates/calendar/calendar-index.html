@@ -13,6 +13,7 @@
         border-radius: 8px;
         padding: 10px;
         background-color: #f9f9f9;
+        height: 95%; /* Slightly smaller than h-100 */
     }
     .fc-toolbar {
         background-color: #fff;
@@ -207,7 +208,7 @@
                         {{ schedule.schedule_name|default:"No Schedule Available" }}
                     </h2>
                 </div>
-                <div class="d-flex flex-grow-1">
+                <div class="d-flex h-100">
                     <!-- Buttons -->
                     <div class="d-flex flex-column align-items-start me-4">
                         <button class="create-btn btn-block" data-bs-toggle="modal" data-bs-target="#addItemModal">
@@ -231,7 +232,7 @@
                         <button class="btn btn-outline-secondary position-absolute top-0 end-0 m-3">
                             <i class="bi bi-gear"></i> Settings
                         </button>
-                        <div id="interactiveCalendar">
+                        <div id="interactiveCalendar" style="height: 90%;">
                             <!-- FullCalendar will render here -->
                         </div>
                     </div>
@@ -263,9 +264,10 @@
         var calendarEl = document.getElementById('interactiveCalendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'timeGridWeek',
+            height: '90%', // Slightly smaller than h-100
             headerToolbar: {
                 left: '', // Remove 'prev, next today'
-                center: 'title',
+                center: '',
                 right: '' // Remove 'timeGridWeek, timeGridDay'
             },
             views: {
