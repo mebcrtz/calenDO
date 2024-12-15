@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse, FileResponse
 from datetime import time
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.utils.text import slugify
 from django.urls import reverse
 from reportlab.pdfgen import canvas
@@ -13,7 +14,7 @@ from .forms import *
 from .models import *
 
 '''AUTHENTICATION VIEWS'''
-def signup(request):
+def signup_page(request):
     form = CreateUserForm()
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
@@ -26,9 +27,20 @@ def signup(request):
     }
     return render(request, 'auth/signup.html', context)
 
-def login(request):
+def login_page(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('calendo-dashboard')
+        else:
+            messages.error(request, 'Username or password is incorrect.')
     context = {}
-    return render(request, 'auth/signin.html', context)
+    return render(request, 'auth/login.html', context)
 
 
 

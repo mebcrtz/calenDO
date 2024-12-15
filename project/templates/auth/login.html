@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup - calenDO</title>
+    <title>Login - calenDO</title>
 <style>
     body {
     font-family: Arial, sans-serif;
@@ -140,7 +140,20 @@
     .or-line:not(:empty)::after {
         margin-left: .50em;
     }
-    .error-message ul {
+    
+    .message ul {
+        list-style-type: none;
+        color: green;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .success {
+        list-style-type: none;
+        color: green;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .error {
         list-style-type: none;
         color: red;
         font-size: 14px;
@@ -160,59 +173,31 @@
         <!-- Right Section (Outside the Box) -->
         <div class="right" style="text-align:center;">
             <h1 class="center-align" style="font-size: 3em; font-weight: bold;">WELCOME</h1>
-            <p>Sign up to calenDO.</p>
+            <p>Log in to calenDO.</p>
             
             <form method="POST" action="">
                 {% csrf_token %}
-                <!-- Display non-field errors -->
-                {% if form.non_field_errors %}
-                    <div class="error-message">
-                        {{ form.non_field_errors }}
+                {% if messages %}
+                    <div>
+                        <ul>
+                            {% for message in messages %}
+                                <li class="{{ message.tags }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
                 {% endif %}
                 <div class="form-group">
-                    <!-- Display field-specific errors -->
-                    {% if form.username.errors %}
-                        <div class="error-message">
-                            {{ form.username.errors }}
-                        </div>
-                    {% endif %}
-                    {{ form.username }}
+                    <input type="text" name="username" placeholder="Username">
                 </div>
                 <div class="form-group">
-                    <!-- Display field-specific errors -->
-                    {% if form.email.errors %}
-                        <div class="error-message">
-                            {{ form.email.errors }}
-                        </div>
-                    {% endif %}
-                    {{ form.email }}
+                    <input type="password" name="password" placeholder="Password">
                 </div>
                 <div class="form-group">
-                    <!-- Display field-specific errors -->
-                    {% if form.password1.errors %}
-                        <div class="error-message">
-                            {{ form.password1.errors }}
-                        </div>
-                    {% endif %}
-                    {{ form.password1 }}
-                </div>
-                <div class="form-group">
-                    <!-- Display field-specific errors -->
-                    {% if form.password2.errors %}
-                        <div class="error-message">
-                            {{ form.password2.errors }}
-                        </div>
-                    {% endif %}
-                    {{ form.password2 }}
-                </div>
-                <div class="form-group">
-                    <button type="submit">Sign Up</button>
+                    <button type="submit">Log in</button>
                 </div>
             </form>
-            
             <div class="signin-link">
-                <p>Already have an account? <a href="{% url 'login' %}">Log in</a>.</p>
+                <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a>.</p>
             </div>
         </div>
 </body>
