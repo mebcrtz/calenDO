@@ -1,16 +1,19 @@
 <!-- Edit Item Modal -->
 <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content" style="border-radius: 8px; border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <!-- Modal Header -->
+            <div class="modal-header" style="background-color: #023D8A; color: white;">
                 <h5 class="modal-title" id="editItemModalLabel">Select Item To Edit</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
             </div>
+
+            <!-- Modal Body -->
             <div class="modal-body">
                 <ul class="list-group">
                     {% for item in items %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>{{ item.item_name }}</span>
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="border: none; border-bottom: 1px solid #ddd;">
+                            <span style="color: #023D8A; font-weight: 500;">{{ item.item_name }}</span>
                             <button 
                                 class="btn btn-outline-primary btn-sm edit-item-button" 
                                 data-bs-toggle="modal" 
@@ -18,17 +21,20 @@
                                 data-item-id="{{ item.id }}"
                                 data-item-name="{{ item.item_name }}"
                                 data-item-type="{{ item.type }}"
-                                data-item-notes="{{ item.notes }}">
-                                Edit
+                                data-item-notes="{{ item.notes }}"
+                                style="color: #023D8A; border-color: #023D8A; border-radius: 10px; padding: 5px 10px;">
+                                <i class="fas fa-edit"></i> Edit
                             </button>
                         </li>
                     {% empty %}
-                        <li class="list-group-item">No items available to edit.</li>
+                        <li class="list-group-item" style="border: none; color: #023D8A; text-align: center;">No items available to edit.</li>
                     {% endfor %}
                 </ul>
             </div>
+
+            <!-- Modal Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: #ddd; color: #023D8A; border: none;">Close</button>
             </div>
         </div>
     </div>
