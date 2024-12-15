@@ -42,7 +42,9 @@ def login_page(request):
     context = {}
     return render(request, 'auth/login.html', context)
 
-
+def logout_user(request):
+    logout(request)
+    return redirect('login')
 
 # Dashboard View
 def dashboard(request):
