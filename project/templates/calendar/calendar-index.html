@@ -53,7 +53,7 @@
                     </button>
                 </div>
                 <!-- Schedule Items -->
-                <div>
+                {% comment %} <div>
                     <h4>Items in Schedule</h4>
                     
                         <table class="table table-striped">
@@ -90,7 +90,7 @@
                             </tbody>
                         </table>
                         
-                </div>
+                </div> {% endcomment %}
             </div>
             <br>
             <h2>{{ schedule.schedule_name|default:"No Schedule Available" }}</h2>
