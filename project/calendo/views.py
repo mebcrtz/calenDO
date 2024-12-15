@@ -1,4 +1,5 @@
 import io
+from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse, FileResponse
 from datetime import time
@@ -82,6 +83,15 @@ def update_task(request):
 
 '''CALENDAR VIEWS'''
 
+def get_current_week_dates():
+    """Get the dates for the current week's Monday through Sunday."""
+    today = datetime.today()
+    start_of_week = today - timedelta(days=today.weekday())  # Monday of the current week
+    return {
+        day_name: (start_of_week + timedelta(days=i)).date()
+        for i, day_name in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
+    }
+
 def calendar_index(request, schedule_name=None):
     schedules = Schedule.objects.filter(user=request.user)
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -90,9 +100,22 @@ def calendar_index(request, schedule_name=None):
     schedule = first_schedule if schedule_name is None else get_object_or_404(Schedule, slug=schedule_name, user=request.user)
     items = schedule.items.prefetch_related('occurrences__days_of_week') if schedule else []
 
+    # Get current week dates
+    current_week_dates = get_current_week_dates()
+
+    # Prepare items with exact dates for occurrences
+    event_list = []
     for item in items:
         for occurrence in item.occurrences.all():
             occurrence.days = [day.name for day in occurrence.days_of_week.all()]
+            for day_name in occurrence.days:
+                if day_name in current_week_dates:
+                    event_date = current_week_dates[day_name]
+                    event_list.append({
+                        'title': item.item_name,
+                        'start': f"{event_date}T{occurrence.start_time}",
+                        'end': f"{event_date}T{occurrence.end_time}",
+                    })
 
     return render(request, "calendar/calendar-index.html", {
         "schedules": schedules,
@@ -100,6 +123,7 @@ def calendar_index(request, schedule_name=None):
         "first_schedule": first_schedule,
         "items": items,
         "days_of_week": days_of_week,
+        "events": event_list,  # Pass the calculated events to the template
     })
 
 
