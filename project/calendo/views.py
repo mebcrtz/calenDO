@@ -12,6 +12,26 @@ from PIL import Image, ImageDraw, ImageFont
 from .forms import *
 from .models import *
 
+'''AUTHENTICATION VIEWS'''
+def signup(request):
+    form = CreateUserForm()
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Account created successfully!')
+            return redirect('login')
+    context = {
+        'form': form
+    }
+    return render(request, 'auth/signup.html', context)
+
+def login(request):
+    context = {}
+    return render(request, 'auth/signin.html', context)
+
+
+
 # Dashboard View
 def dashboard(request):
     return render(request, 'dashboard.html')
