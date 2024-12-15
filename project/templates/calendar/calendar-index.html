@@ -1,70 +1,11 @@
 {% extends "partials/base.html" %}
 
 {% block content %}
-<div class="d-flex mt-4">
-    {% if schedules.exists %}
-        <div class="d-flex flex-grow-1 shadow p-3 bg-white rounded">
-            <!-- Sidebar -->
-            <aside class="d-flex flex-column col-2">
-                <h2 class="text-primary">calenDO</h2>
-                <button class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#createScheduleModal">Create New Schedule</button>
-                <ul class="list-group" id="scheduleList">
-                    {% for schedule in schedules %}
-                        <li class="list-group-item {% if schedule.id == schedule.id %}active{% endif %}">
-                            <a href="{% url 'schedule_detail' schedule.slug %}" class="text-decoration-none text-white">{{ schedule.schedule_name }}</a>
-                        </li>
-                    {% empty %}
-                        <li class="list-group-item">No schedules available</li>
-                    {% endfor %}
-                </ul>
-            </aside>
-
-            <!-- Main Section -->
-            <section class="d-flex flex-column col-7 justify-content-between" id="calendarIndex">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2>{{ schedule.schedule_name|default:"No Schedule Available" }}</h2>
-                    <button class="btn btn-outline-secondary">Settings</button>
-                </div>
-                <div class="d-flex flex-grow-1">
-                    <!-- Buttons -->
-                    <div class="d-flex flex-column align-items-start me-4">
-                        <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addItemModal">Add Item</button>
-                        <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#editItemModal">Edit Item</button>
-                        <button class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#selectItemToRemoveModal">Remove Item</button>
-                        <button class="btn btn-info mb-2" data-bs-toggle="modal" data-bs-target="#exportScheduleModal">Export</button>
-                        <button class="btn btn-dark mb-2 delete-schedule-button" data-bs-toggle="modal" data-bs-target="#deleteScheduleModal" data-schedule-slug="{{ schedule.slug }}" data-schedule-name="{{ schedule.schedule_name }}">Delete</button>
-                    </div>
-                    <!-- Calendar -->
-                    <div class="flex-grow-1">
-                        <div id="interactiveCalendar">
-                            <!-- FullCalendar will render here -->
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-        </div>
-    {% else %}
-        <div class="col-md-12 text-center">
-            <p>No schedule available. Click the button below to add a new schedule.</p>
-            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createScheduleModal">Add Schedule</button>
-        </div>
-    {% endif %}
-</div>
-
-<!-- Modals -->
-{% include "partials/create-schedule-modal.html" %}
-{% include "partials/add-item-modal.html" %}
-{% include "partials/edit-item-modal.html" %}
-{% include "partials/edit-selected-item-modal.html" %}
-{% include "partials/remove-item-modal.html" %}
-{% include "partials/confirm-remove-item-modal.html" %}
-{% include "partials/confirm-schedule-delete-modal.html" %}
-{% include "partials/export-schedule-modal.html" %}
 
 <!-- FullCalendar CSS and JS -->
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <style>
     /* Custom CSS for modern UI */
     #interactiveCalendar {
@@ -110,7 +51,210 @@
     .fc-timegrid-slot-lane:hover {
         background-color: #e0f7fa; /* Light blue background on hover for specific cell */
     }
+
+    /* General Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+    body {
+        background-color: #f8f9fa;
+    }
+    a {
+        text-decoration: none;
+    }
+
+    /* Main Container */
+    .main-container {
+        display: flex;
+        padding: 2rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        margin-top: 20px;
+        width: 20%;
+        background-color: white;
+        padding: 1rem;
+        border-radius: 20px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        margin-right: 1rem; /* Add margin to the right */
+    }
+    .sidebar h3 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    .create-btn {
+        display: inline-block;
+        background-color: #003366;
+        color: white;
+        padding: .5rem 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        margin-bottom: 1rem;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .recent-schedules {
+        list-style: none;
+    }
+    .recent-schedules li {
+        margin: 0.5rem 0;
+        padding: 1rem;
+        background-color: white;
+        text-align: center;
+        border-radius: 3px;
+        color: #555;
+    }
+    .see-all {
+        color: #003366;
+        display: block;
+        margin-top: 1rem;
+    }
+
+    /* Main Content */
+    .content {
+        flex: 1;
+        margin-left: 2rem;
+        margin-top: 20px;
+        height: 78vh;
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        padding: 1rem; /* Add padding */
+    }
+    .content-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(#71AEFF, #023D8A);
+        padding: 60px;
+        border-radius: 20px;
+    }
+    .content-header h2 {
+        color: white;
+    }
+    .search-bar {
+        position: relative;
+        width: 50%;
+        margin: 0 auto;
+    }
+    .search-bar input {
+        width: 100%;
+        padding: 0.5rem 1rem 0.5rem 2.5rem; /* Add padding to the left for the icon */
+        margin-top: 0.2rem;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+    }
+    .search-bar input::placeholder {
+        padding-left: 8px; /* Add left padding to the placeholder text */
+    }
+    .search-bar::before {
+        content: "\1F50D"; /* Unicode for magnifying glass */
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        color: #ff;
+    }
+
+    /* Schedule Box */
+    .schedule-box {
+        background-color: #f1f1f1;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 3.5rem;
+        margin-left: 3rem;
+        width: 25vh;
+        height: 20vh;
+        margin-bottom: 1rem;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+    }
+
+    /* Button Block */
+    .btn-block {
+        display: block;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
 </style>
+
+<div class="d-flex mt-4">
+    {% if schedules.exists %}
+        
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3 style="margin-top: 2rem; font-size: 40px; font-weight: 800; text-align: center;">calen<span style="color: #003366; font-weight: 800;">DO</span></h3>
+                <button class="create-btn btn-block" data-bs-toggle="modal" data-bs-target="#createScheduleModal">+ Create New Schedule</button>
+                <ul class="list-group" id="scheduleList">
+                    {% for schedule in schedules %}
+                        <li class="list-group-item {% if schedule.id == schedule.id %}active{% endif %}">
+                            <a href="{% url 'schedule_detail' schedule.slug %}" class="text-decoration-none text-white">{{ schedule.schedule_name }}</a>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No schedules available</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Main Section -->
+            <div class="content col-10" id="calendarIndex">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>{{ schedule.schedule_name|default:"No Schedule Available" }}</h2>
+                </div>
+                <div class="d-flex flex-grow-1">
+                    <!-- Buttons -->
+                    <div class="d-flex flex-column align-items-start me-4">
+                        <button class="create-btn btn-block" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                            <i class="bi bi-plus-circle"></i> Add Item
+                        </button>
+                        <button class="create-btn btn-block" data-bs-toggle="modal" data-bs-target="#editItemModal">
+                            <i class="bi bi-pencil-square"></i> Edit Item
+                        </button>
+                        <button class="create-btn btn-block" data-bs-toggle="modal" data-bs-target="#selectItemToRemoveModal">
+                            <i class="bi bi-trash"></i> Remove Item
+                        </button>
+                        <button class="create-btn btn-block" data-bs-toggle="modal" data-bs-target="#exportScheduleModal">
+                            <i class="bi bi-download"></i> Export
+                        </button>
+                        <button class="create-btn btn-block delete-schedule-button" data-bs-toggle="modal" data-bs-target="#deleteScheduleModal" data-schedule-slug="{{ schedule.slug }}" data-schedule-name="{{ schedule.schedule_name }}">
+                            <i class="bi bi-x-circle"></i> Delete
+                        </button>
+                    </div>
+                    <!-- Calendar -->
+                    <div class="flex-grow-1 position-relative">
+                        <button class="btn btn-outline-secondary position-absolute top-0 end-0 m-3">
+                            <i class="bi bi-gear"></i> Settings
+                        </button>
+                        <div id="interactiveCalendar">
+                            <!-- FullCalendar will render here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+       
+    {% else %}
+        <div class="col-md-12 text-center">
+            <p>No schedule available. Click the button below to add a new schedule.</p>
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createScheduleModal">Add Schedule</button>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Modals -->
+{% include "partials/create-schedule-modal.html" %}
+{% include "partials/add-item-modal.html" %}
+{% include "partials/edit-item-modal.html" %}
+{% include "partials/edit-selected-item-modal.html" %}
+{% include "partials/remove-item-modal.html" %}
+{% include "partials/confirm-remove-item-modal.html" %}
+{% include "partials/confirm-schedule-delete-modal.html" %}
+{% include "partials/export-schedule-modal.html" %}
+
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
