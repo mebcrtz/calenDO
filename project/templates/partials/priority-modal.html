@@ -1,0 +1,24 @@
+<div class="modal fade" id="priorityModal" tabindex="-1" aria-labelledby="priorityModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="priorityModalLabel">Filter Tasks by Priority</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="priorityFilterForm">
+                    <div class="mb-3">
+                        <label for="priorityFilter" class="form-label">Select Priority</label>
+                        <select class="form-select" id="priorityFilter" name="priority">
+                            <option value="all">All</option>
+                            <option value="Priority 1">Priority 1</option>
+                            <option value="Priority 2">Priority 2</option>
+                            <option value="Priority 3">Priority 3</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="applyPriorityFilter">Apply Filter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
