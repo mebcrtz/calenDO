@@ -238,8 +238,21 @@
                 const section = button.getAttribute('data-section');
                 const newTitle = prompt("Edit Section Title", section);
                 if (newTitle) {
-                    // Update backend with AJAX or form submission (not implemented here)
-                    button.previousElementSibling.textContent = newTitle;
+                    // Update backend with AJAX or form submission
+                    fetch(`/update-section/${section}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ new_title: newTitle })
+                    }).then(response => {
+                        if (response.ok) {
+                            button.previousElementSibling.textContent = newTitle;
+                        } else {
+                            alert('Failed to update section title.');
+                        }
+                    });
                 }
             });
         });
@@ -247,12 +260,37 @@
         // Edit Task Title
         document.querySelectorAll('.edit-task-btn').forEach(button => {
             button.addEventListener('click', () => {
-                const taskTitleElement = button.previousElementSibling;
-                const currentTitle = taskTitleElement.textContent;
-                const newTitle = prompt("Edit Task Title", currentTitle);
-                if (newTitle) {
-                    // Update backend with AJAX or form submission (not implemented here)
-                    taskTitleElement.textContent = newTitle;
+                const taskCard = button.closest('.task-card');
+                const taskId = taskCard.getAttribute('data-task-id');
+                const taskTitleElement = taskCard.querySelector('.task-title');
+                const taskDescElement = taskCard.querySelector('.task-desc');
+                const taskDateElement = taskCard.querySelector('.task-date');
+
+                const newTitle = prompt("Edit Task Title", taskTitleElement.textContent);
+                const newDesc = prompt("Edit Task Description", taskDescElement.textContent);
+                const newDate = prompt("Edit Task Due Date", taskDateElement.textContent);
+
+                if (newTitle || newDesc || newDate) {
+                    // Update backend with AJAX or form submission
+                    fetch(`/update-task/${taskId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ new_title: newTitle, new_desc: newDesc, new_date: newDate })
+                    }).then(response => {
+                        if (response.ok) {
+                            if (newTitle) taskTitleElement.textContent = newTitle;
+                            if (newDesc) taskDescElement.textContent = newDesc;
+                            if (newDate) taskDateElement.textContent = newDate;
+                        } else {
+                            alert('Failed to update task.');
+                        }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while updating the task.');
+                    });
                 }
             });
         });
@@ -262,11 +300,26 @@
             button.addEventListener('click', () => {
                 const taskId = button.getAttribute('data-task-id');
                 if (confirm("Are you sure you want to delete this task?")) {
-                    // Delete from backend with AJAX or form submission (not implemented here)
-                    button.closest('.task-card').remove();
+                    // Delete from backend with AJAX or form submission
+                    fetch(`/delete-task/${taskId}/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            button.closest('.task-card').remove();
+                        } else {
+                            alert('Failed to delete task.');
+                        }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while deleting the task.');
+                    });
                 }
             });
         });
     });
 </script>
+
 {% endblock %}

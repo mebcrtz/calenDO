@@ -8,6 +8,8 @@ from django.utils.text import slugify
 from django.urls import reverse
 from reportlab.pdfgen import canvas
 from PIL import Image, ImageDraw, ImageFont
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 from .forms import *
 from .models import *
@@ -56,29 +58,37 @@ def task_detail(request, task_id):
     return JsonResponse(task_data)
 
 
-def update_task(request):
-    if request.method == "POST":
-        task_id = request.POST.get("task_id")
-        if not task_id:
-            messages.error(request, "Task ID is missing.")
-            return redirect('todo_index')
-
+@csrf_exempt
+def update_task(request, task_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        new_title = data.get('new_title')
+        new_desc = data.get('new_desc')
+        new_date = data.get('new_date')
         try:
             task = Task.objects.get(id=task_id)
-            task.task_name = request.POST.get("task_name")
-            task.description = request.POST.get("description")
-            task.due_date = request.POST.get("due_date")
-            task.section = request.POST.get("section")
-            task.priority = request.POST.get("priority")
+            if new_title:
+                task.task_name = new_title
+            if new_desc:
+                task.description = new_desc
+            if new_date:
+                task.due_date = new_date
             task.save()
-            messages.success(request, "Task updated successfully!")
+            return JsonResponse({'status': 'success'})
         except Task.DoesNotExist:
-            messages.error(request, "Task not found.")
+            return JsonResponse({'status': 'fail', 'message': 'Task not found'}, status=404)
+    return JsonResponse({'status': 'fail', 'message': 'Invalid request method'}, status=400)
 
-        return redirect('todo_index')
-
-    messages.error(request, "Invalid request method.")
-    return redirect('todo_index')
+@csrf_exempt
+def delete_task(request, task_id):
+    if request.method == 'DELETE':
+        try:
+            task = Task.objects.get(id=task_id)
+            task.delete()
+            return JsonResponse({'status': 'success'})
+        except Task.DoesNotExist:
+            return JsonResponse({'status': 'fail', 'message': 'Task not found'}, status=404)
+    return JsonResponse({'status': 'fail', 'message': 'Invalid request method'}, status=400)
 
 def list_view(request):
     # Organize tasks by section
@@ -90,6 +100,20 @@ def list_view(request):
         sections_and_tasks[task.section].append(task)
     return render(request, 'todo/list-view.html', {'sections_and_tasks': sections_and_tasks})
 
+
+@csrf_exempt
+def update_section(request, section_name):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        new_title = data.get('new_title')
+        try:
+            section = Section.objects.get(name=section_name)
+            section.name = new_title
+            section.save()
+            return JsonResponse({'status': 'success'})
+        except Section.DoesNotExist:
+            return JsonResponse({'status': 'fail', 'message': 'Section not found'}, status=404)
+    return JsonResponse({'status': 'fail', 'message': 'Invalid request method'}, status=400)
 
 '''CALENDAR VIEWS'''
 
