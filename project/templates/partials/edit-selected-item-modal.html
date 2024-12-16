@@ -1,15 +1,24 @@
 <!-- Edit Item Details Modal -->
 <div class="modal fade" id="editItemDetailsModal" tabindex="-1" aria-labelledby="editItemDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content" style="border: 2px solid #023D8A;">
+            <div class="modal-header" style="background-color: #023D8A; color: white;">
                 <h5 class="modal-title" id="editItemDetailsModalLabel">Edit Item Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: white;"></button>
             </div>
             <div class="modal-body">
                 <form id="editItemDetailsForm" method="POST" action="">
                     {% csrf_token %}
-                    <input type="hidden" name="item_id" id="editItemDetailsId">
+                    <input type="hidden" name="item_id" id="editItemId">
+
+                    <!-- Item Type -->
+                    <div class="btn-group w-100 mb-3" role="group" aria-label="Event or Class">
+                        <input type="radio" class="btn-check" name="itemType" id="editEvent" value="event">
+                        <label class="btn btn-outline-primary" style="color: #023D8A; border: 1px solid #023D8A;" for="editEvent">Event</label>
+
+                        <input type="radio" class="btn-check" name="itemType" id="editClass" value="class">
+                        <label class="btn btn-outline-primary" style="color: #023D8A; border: 1px solid #023D8A;" for="editClass">Class</label>
+                    </div>
 
                     <!-- Item Name -->
                     <div class="mb-3">
@@ -78,11 +87,18 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                    <button type="button" class="btn mb-3" id="editAddTimeButton" style="background-color: #023D8A; color: white;">Add Another Time</button>
+
+                    <!-- Notes -->
+                    <div class="mb-3">
+                        <label for="editNotes" class="form-label">Notes:</label>
+                        <textarea class="form-control" name="notes" id="editNotes" rows="3">{{ item.notes }}</textarea>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn" style="border: 1px solid #023D8A; color: #023D8A;" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="editItemForm" class="btn" style="background-color: #023D8A; color: white;">Save Changes</button>
             </div>
         </div>
     </div>

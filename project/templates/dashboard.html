@@ -1,10 +1,103 @@
 {% extends "partials/base.html" %}
 
 {% block content %}
+<style>
+    /* General Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+    /* Main Content */
+    .container {
+        padding: 20px;
+    }
+    .section {
+        margin-bottom: 30px;
+    }
+    .section h2 {
+        color: #0a2a66;
+        font-size: 24px;
+        margin-bottom: 15px;
+        font-weight: 800;
+    }
+    .section-content {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .card {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 180vh;
+        height: 25vh;
+        text-align: center;
+        margin-left: 50px;
+    }
+    .card h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    .card p {
+        font-size: 14px;
+        color: #666;
+    }
+    .card img {
+        width: 100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    .view-all {
+        text-align: right;
+        margin-top: 10px;
+    }
+    .view-all a {
+        text-decoration: none;
+        color: #0a2a66;
+        font-weight: bold;
+    }
+    .view-all a:hover {
+        text-decoration: underline;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .card {
+            flex: 1 1 calc(50% - 20px);
+        }
+    }
+    @media (max-width: 480px) {
+        .card {
+            flex: 1 1 100%;
+        }
+        .navbar .nav-links {
+            display: none;
+        }
+        .navbar .search input {
+            width: 100px;
+        }
+    }
+</style>
     <!-- Dashboard Content -->
-    <div class="container mt-4">
+    <div class="container">
         <!-- To-Do List Section -->
-        <div class="mb-5">
-            <h2 class="text-primary mb-3">To-Do List</h2>
-            <h2 class="text-primary mb-3">Calendar</h2>
+        <div class="section">
+            <h2>To-Do List</h2>
+            <div class="section-content">
+                <div class="card">
+                    <h3 style="padding-top: 50px;">No To-Do Items</h3>
+                    <p>You have no to-do items yet. Start adding some!</p>
+                </div>
+            </div>
+            <h2 style="margin-top: 20px;">Calendar</h2>
+            <div class="section-content">
+                <div class="card">
+                    <h3 style="padding-top: 50px;">No Items in Calendar</h3>
+                    <p>You have no items yet. Start adding some!</p>
+                </div>
+            </div>
+        </div>
 {% endblock %}

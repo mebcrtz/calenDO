@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - calenDO</title>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    }
+    .container {
+        display: flex;
+        max-width: 1000px;
+        width: 100%;
+        margin-right: 30px;
+        margin-left: 5px;
+        align-items: flex-start;
+    }
+    .left {
+        background: #0a2a66;
+        color: white;
+        padding: 93px;
+        margin-right: 20%;
+        margin-top: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 50%;
+    }
+    .left img {
+        width: 300px;
+        margin-bottom: 20px;
+    }
+    .left h2 {
+        margin-bottom: 20px;
+    }
+    .left p {
+        text-align: left;
+        line-height: 1.6;
+    }
+    .right {
+        margin-left: 10px; /* Add some spacing between the sections */
+        width: 50%;
+    }
+    .right h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-bottom: 2px solid #0a2a66;
+        border-radius: 0;
+        background-color: transparent;
+        color: #0a2a66;
+    }
+    .form-group button {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        background: #0a2a66;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .form-group input::placeholder {
+        color: #0a2a66; /* Set placeholder color */
+    }
+    .form-group button:hover {
+        background: #0944a8;
+    }
+    .or {
+        text-align: center;
+        margin: 20px 0;
+    }
+    .alt-signup {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .alt-signup button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: #eaeaea;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+    }
+    .alt-signup button:hover {
+        background: #ddd;
+    }
+    .signin-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .signin-link a {
+        color: #0a2a66;
+        text-decoration: none;
+    }
+    .signin-link a:hover {
+        text-decoration: underline;
+    }
+    .center-align {
+        text-align: center;
+        color: #0a2a66;
+        font-size: 3em; /* Adjust the size as needed */
+        font-weight: bold; /* Make the text bold */
+    }
+    .or-line {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 20px 0;
+        color: #0a2a66;
+        margin-top: 50px;
+    }
+    .or-line::before,
+    .or-line::after {
+        content: '';
+        flex: 1;
+        border-bottom: 3px solid #000;
+        margin-right: 20px;
+        margin-left: 30px;
+    }
+    .or-line:not(:empty)::before {
+        margin-right: .50em;
+    }
+    .or-line:not(:empty)::after {
+        margin-left: .50em;
+    }
+    
+    .message ul {
+        list-style-type: none;
+        color: green;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .success {
+        list-style-type: none;
+        color: green;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .error {
+        list-style-type: none;
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Section (Inside the Box) -->
+        <div class="left">
+            <img src="signup.png" alt="Plan Includes">
+            <p>✔ Organize your tasks and deadlines<br>
+               ✔ Create schedule views for all your events</p>
+        </div>
+
+        <!-- Right Section (Outside the Box) -->
+        <div class="right" style="text-align:center;">
+            <h1 class="center-align" style="font-size: 3em; font-weight: bold;">WELCOME</h1>
+            <p>Log in to calenDO.</p>
+            
+            <form method="POST" action="">
+                {% csrf_token %}
+                {% if messages %}
+                    <div>
+                        <ul>
+                            {% for message in messages %}
+                                <li class="{{ message.tags }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    <input type="text" name="username" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <button type="submit">Log in</button>
+                </div>
+            </form>
+            <div class="signin-link">
+                <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a>.</p>
+            </div>
+        </div>
+</body>
+</html>
