@@ -60,6 +60,12 @@
     }
     .fc-event-title {
         text-align: center; /* Center align the text of calendar events */
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+    }
+    .fc-event-time {
+        text-align: center; /* Center align the time of calendar events */
+        font-style: italic;
     }
 
     /* General Styles */
@@ -305,6 +311,11 @@
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true // Use 12-hour format with AM/PM
+            },
+            eventTimeFormat: { // Ensure event times include AM/PM
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
             },
             firstDay: 1, // Set the first day of the week to Monday
             allDaySlot: false, // Remove the all-day row
