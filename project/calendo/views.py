@@ -91,7 +91,7 @@ def create_task(request):
 
 
 def task_detail(request, task_id):
-    task = get_object_or_404(Task, id=task_id, schedule__user=request.user)
+    task = get_object_or_404(Task, id=task_id, user=request.user)
     notes = Note.objects.filter(task=task).order_by('-timestamp')
     notes_data = [{'content': note.content, 'timestamp': note.timestamp.strftime('%B %d, %Y %I:%M %p')} for note in notes]
     task_data = {
@@ -150,7 +150,7 @@ def update_task(request):
 
         try:
             # Fetch the task to be updated
-            task = get_object_or_404(Task, id=task_id, schedule__user=request.user)
+            task = get_object_or_404(Task, id=task_id, user=request.user)
 
             # Update task fields with data from the form
             task.task_name = request.POST.get("task_name", task.task_name)
@@ -174,7 +174,7 @@ def set_priority(request):
         task_id = request.POST.get('task_id')
         priority = request.POST.get('priority')
         try:
-            task = get_object_or_404(Task, id=task_id, schedule__user=request.user)
+            task = Task.objects.get(id=task_id)
             task.priority = priority
             task.save()
             messages.success(request, "Task updated successfully!")
