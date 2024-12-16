@@ -13,6 +13,7 @@
         border-radius: 8px;
         padding: 10px;
         background-color: #f9f9f9;
+        height: 95%; /* Slightly smaller than h-100 */
     }
     .fc-toolbar {
         background-color: #fff;
@@ -50,6 +51,21 @@
     }
     .fc-timegrid-slot-lane:hover {
         background-color: #e0f7fa; /* Light blue background on hover for specific cell */
+    }
+    .create-btn:hover {
+        background-color: #0056b3;
+    }
+    .btn-block:hover {
+        background-color: #0056b3;
+    }
+    .fc-event-title {
+        text-align: center; /* Center align the text of calendar events */
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+    }
+    .fc-event-time {
+        text-align: center; /* Center align the time of calendar events */
+        font-style: italic;
     }
 
     /* General Styles */
@@ -180,6 +196,12 @@
         width: 100%;
         margin-bottom: 1rem;
     }
+
+    .settings-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
 </style>
 
 <div class="d-flex mt-4">
@@ -201,11 +223,13 @@
             </div>
 
             <!-- Main Section -->
-            <div class="content col-10" id="calendarIndex">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2>{{ schedule.schedule_name|default:"No Schedule Available" }}</h2>
+            <div class="content col-10 position-relative" id="calendarIndex">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 style="color: #007bff; font-size: 35px; font-weight: bold;">
+                        {{ schedule.schedule_name|default:"No Schedule Available" }}
+                    </h2>
                 </div>
-                <div class="d-flex flex-grow-1">
+                <div class="d-flex h-100">
                     <!-- Buttons -->
                     <div class="d-flex flex-column align-items-start me-4">
                         <button class="create-btn btn-block" data-bs-toggle="modal" data-bs-target="#addItemModal">
@@ -226,10 +250,10 @@
                     </div>
                     <!-- Calendar -->
                     <div class="flex-grow-1 position-relative">
-                        <button class="btn btn-outline-secondary position-absolute top-0 end-0 m-3">
+                        <!-- <button class="btn btn-outline-secondary settings-button">
                             <i class="bi bi-gear"></i> Settings
-                        </button>
-                        <div id="interactiveCalendar">
+                        </button> -->
+                        <div id="interactiveCalendar" style="height: 90%;">
                             <!-- FullCalendar will render here -->
                         </div>
                     </div>
@@ -261,15 +285,14 @@
         var calendarEl = document.getElementById('interactiveCalendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'timeGridWeek',
-            headerToolbar: {
-                left: '', // Remove 'prev, next today'
-                center: 'title',
-                right: '' // Remove 'timeGridWeek, timeGridDay'
-            },
+            height: '90%', // Slightly smaller than h-100
+            headerToolbar: false, // Hide the header
             views: {
                 timeGridWeek: {
-                    titleFormat: { 
-                        weekday: 'long' // Only display the weekday name
+                    titleFormat: { // Format the title of the week view
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
                     },
                     dayHeaderFormat: { // Format the day headers
                         weekday: 'long' // Show only weekday names like 'Monday'
@@ -287,14 +310,16 @@
             slotLabelFormat: {
                 hour: '2-digit',
                 minute: '2-digit',
-                hour12: false
+                hour12: true // Use 12-hour format with AM/PM
+            },
+            eventTimeFormat: { // Ensure event times include AM/PM
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
             },
             firstDay: 1, // Set the first day of the week to Monday
             allDaySlot: false, // Remove the all-day row
-            events: {{ events|safe }},
-            dateClick: function(info) {
-                alert('Clicked on: ' + info.dateStr);
-            }
+            events: {{ events|safe }}
         });
         calendar.render();
     });
