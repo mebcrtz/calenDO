@@ -124,6 +124,7 @@
                 <i class="fas fa-tasks"></i> Task View
             </button>
             <ul class="dropdown-menu" aria-labelledby="taskViewDropdown">
+                <li><a class="dropdown-item" href="#" id="defaultViewBtn">Default View</a></li>
                 <li><a class="dropdown-item" href="#" id="listViewBtn">List View</a></li>
                 <li><a class="dropdown-item" href="#" id="calendarViewBtn">Calendar View</a></li>
             </ul>
@@ -199,6 +200,11 @@
         const taskContainer = document.querySelector('.task-container');
         const listViewBtn = document.getElementById('listViewBtn');
         const calendarViewBtn = document.getElementById('calendarViewBtn');
+
+        // Redirect to Default View page
+        document.getElementById('defaultViewBtn').addEventListener('click', () => {
+            window.location.href = "{% url 'todo_index' %}";
+        });
 
         // Redirect to List View page
         listViewBtn.addEventListener('click', () => {
