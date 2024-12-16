@@ -11,20 +11,33 @@
             <div class="modal-body">
                 <form method="post" action="{% url 'create_task' %}">
                     {% csrf_token %}
+
                     <!-- Task Name -->
                     <div class="mb-3">
                         <label for="taskName" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Task Name</label>
                         <input type="text" class="form-control" id="taskName" name="task_name" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;" required>
                     </div>
 
-                    <!-- Description (Styled Like Notes) -->
+                    <!-- Description -->
                     <div class="mb-3">
                         <label for="description" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Description</label>
-                        <input type="text" class="form-control" id="description" name="description" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; width: 100%; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></input>
+                        <input type="text" class="form-control" id="description" name="description" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;">
                     </div>
 
-                    <!-- Section, Priority, and Due Date in One Line -->
+                    <!-- Notes -->
+                    <div class="mb-3">
+                        <label for="notes" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></textarea>
+                    </div>
+
+                    <!-- Section, Priority, and Due Date -->
                     <div class="row mb-3">
+                        <!-- Due Date -->
+                        <div class="col-md-4">
+                            <label for="dueDate" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Due Date</label>
+                            <input type="date" class="form-control" id="dueDate" name="due_date" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;" required>
+                        </div>
+
                         <!-- Section -->
                         <div class="col-md-4">
                             <label for="section" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Section</label>
@@ -35,20 +48,14 @@
                         <div class="col-md-4">
                             <label for="priority" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Priority</label>
                             <select class="form-select" id="priority" name="priority" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;">
-                                <option value="Priority 1">Priority 1</option>
-                                <option value="Priority 2">Priority 2</option>
-                                <option value="Priority 3">Priority 3</option>
+                                <option value="Priority 1">Low</option>
+                                <option value="Priority 2">Medium</option>
+                                <option value="Priority 3">High</option>
                             </select>
-                        </div>
-
-                        <!-- Due Date -->
-                        <div class="col-md-4">
-                            <label for="dueDate" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Due Date</label>
-                            <input type="date" class="form-control" id="dueDate" name="due_date" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;" required>
                         </div>
                     </div>
 
-                    <!-- Modal Footer with Save Button (Inside Form) -->
+                    <!-- Modal Footer with Save Button -->
                     <div class="modal-footer d-flex justify-content-end" style="padding: 15px 15px;">
                         <button type="submit" class="btn w-100" style="background-color: #023D8A; color: white; border-radius: 4px; font-size: 0.9rem;">
                             <i class="bi bi-save me-2"></i> Save

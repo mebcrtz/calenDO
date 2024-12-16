@@ -9,55 +9,65 @@
 
             <!-- Modal Body -->
             <div class="modal-body">
-                <form id="taskDetailForm" method="post" action="{% url 'update_task' %}">
+                <form id="taskDetailForm" method="POST" action="{% url 'update_task' %}">
                     {% csrf_token %}
                     <input type="hidden" id="modalTaskId" name="task_id">
 
                     <!-- Task Name -->
                     <div class="mb-3">
                         <label for="modalTaskName" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Task Name</label>
-                        <input type="text" class="form-control" id="modalTaskName" name="task_name" required 
-                               style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                        <input type="text" id="modalTaskName" name="task_name" class="form-control" style="color: #023D8A; font-size: 1.5rem;">
                     </div>
 
-                    <!-- Description -->
+                    <!-- Task Description -->
                     <div class="mb-3">
-                        <label for="modalTaskDescription" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Description</label>
-                        <input type="text" class="form-control" id="modalTaskDescription" name="description"
-                                  style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></textarea>
+                        <label for="modalTaskDescription" class="form-label" style="color: #555; font-size: 0.95rem;">Description</label>
+                        <textarea id="modalTaskDescription" name="description" class="form-control" style="color: #555; font-size: 0.95rem;"></textarea>
                     </div>
 
-                    <!-- Section, Priority, and Due Date in One Line -->
-                    <div class="row mb-3">
-                        <!-- Section -->
-                        <div class="col-md-4">
-                            <label for="modalSection" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Section</label>
-                            <input type="text" class="form-control" id="modalSection" name="section" 
-                                   style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                    <!-- Notes Section -->
+                    <div class="mb-3">
+                        <label for="notesList" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Notes</label>
+                        <div id="notesList" class="mb-3" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); background-color: #F9F9F9;">
                         </div>
+                    </div>
 
-                        <!-- Priority -->
-                        <div class="col-md-4">
-                            <label for="modalPriority" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Priority</label>
-                            <select class="form-select" id="modalPriority" name="priority" 
-                                    style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
-                                <option value="Priority 1">Priority 1</option>
-                                <option value="Priority 2">Priority 2</option>
-                                <option value="Priority 3">Priority 3</option>
+                    <!-- Add Note Section -->
+                    <div class="mb-3">
+                        <label for="modalNotes" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Add Note</label>
+                        <textarea class="form-control" id="modalNotes" name="notes" rows="3" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></textarea>
+                        <div class="d-flex justify-content-end mt-2">
+                            <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #F1F3F5; color: black; border-radius: 4px; font-size: 0.9rem;">Cancel</button>
+                            <button id="addNoteButton" class="btn btn-primary" 
+                                style="background-color: #1E4E9D; font-size: 0.9rem; color: white; border: none; border-radius: 4px;">
+                                Add Note
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information Section -->
+                    <div class="d-flex justify-content-between mt-3" style="font-size: 0.9rem; color: #555;">
+                        <div>
+                            <label for="modalDueDate" class="form-label" style="color: #023D8A;">Due Date</label>
+                            <input type="date" id="modalDueDate" name="due_date" class="form-control" style="color: #555;">
+                        </div>
+                        <div>
+                            <label for="modalSection" class="form-label" style="color: #023D8A;">Section</label>
+                            <input type="text" id="modalSection" name="section" class="form-control" style="color: #555;">
+                        </div>
+                        <div>
+                            <label for="modalPriority" class="form-label" style="color: #023D8A;">Priority</label>
+                            <select id="modalPriority" name="priority" class="form-select">
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
                             </select>
-                        </div>
-
-                        <!-- Due Date -->
-                        <div class="col-md-4">
-                            <label for="modalDueDate" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Due Date</label>
-                            <input type="date" class="form-control" id="modalDueDate" name="due_date" 
-                                   style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
                         </div>
                     </div>
                 </form>
             </div>
 
-            <!-- Modal Footer with Save Button -->
+            <!-- Modal Footer -->
             <div class="modal-footer d-flex justify-content-end" style="padding: 15px 15px; background-color: #F8F9FA; border-top: 1px solid #ddd;">
                 <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #F1F3F5; color: black; border-radius: 4px; font-size: 0.9rem;">Close</button>
                 <button type="submit" form="taskDetailForm" class="btn btn-primary btn-sm d-flex align-items-center" 

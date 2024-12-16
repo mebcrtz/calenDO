@@ -1,8 +1,10 @@
 import io
+import json
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse, FileResponse
 from datetime import time
+from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -56,7 +58,6 @@ def dashboard(request):
 '''TO-DO VIEWS'''
 @login_required(login_url='login')
 def todo_index(request):
-    # Organize tasks by section
     tasks = Task.objects.all()
     sections_and_tasks = {}
     for task in tasks:
@@ -82,17 +83,56 @@ def create_task(request):
 
 
 def task_detail(request, task_id):
-    task = get_object_or_404(Task, id=task_id)
+    task = Task.objects.get(id=task_id)
+    notes = Note.objects.filter(task=task).order_by('-timestamp')
+    notes_data = [{'content': note.content, 'timestamp': note.timestamp.strftime('%B %d, %Y %I:%M %p')} for note in notes]
     task_data = {
-        "task_name": task.task_name,
-        "description": task.description,
-        "due_date": task.due_date.strftime('%Y-%m-%d'),
-        "section": task.section,
-        "priority": task.priority,
+        'task_name': task.task_name,
+        'description': task.description,
+        'due_date': task.due_date.strftime('%Y-%m-%d'),
+        'section': task.section,
+        'priority': task.priority,
+        'notes': notes_data
     }
     return JsonResponse(task_data)
 
+def add_note(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data from the request body
+            data = json.loads(request.body)
+            task_id = data.get('task_id')
+            content = data.get('notes')
 
+            # Validate the required fields
+            if not task_id or not content:
+                return JsonResponse({'error': 'Task ID and content are required.'}, status=400)
+
+            # Fetch the task and create the note
+            task = Task.objects.get(id=task_id)
+            note = Note.objects.create(task=task, content=content, timestamp=timezone.now())
+            formatted_date = note.timestamp.strftime('%B %d, %Y %I:%M %p')  # Example: December 16, 2024, 09:28 AM
+
+            return JsonResponse({
+                'id': note.id,
+                'content': note.content,
+                'timestamp': formatted_date  # Return formatted date
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+        except Task.DoesNotExist:
+            return JsonResponse({'error': 'Task not found.'}, status=404)
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+def delete_task(request, task_id):
+    if request.method == 'DELETE':
+        task = get_object_or_404(Task, id=task_id)
+        task.delete()
+        return HttpResponse(status=204)
+    return HttpResponse('Invalid request', status=400)
+
+@login_required(login_url='login')
 def update_task(request):
     if request.method == "POST":
         task_id = request.POST.get("task_id")
@@ -101,13 +141,17 @@ def update_task(request):
             return redirect('todo_index')
 
         try:
+            # Fetch the task to be updated
             task = Task.objects.get(id=task_id)
-            task.task_name = request.POST.get("task_name")
-            task.description = request.POST.get("description")
-            task.due_date = request.POST.get("due_date")
-            task.section = request.POST.get("section")
-            task.priority = request.POST.get("priority")
+
+            # Update task fields with data from the form
+            task.task_name = request.POST.get("task_name", task.task_name)
+            task.description = request.POST.get("description", task.description)
+            task.due_date = request.POST.get("due_date", task.due_date)
+            task.section = request.POST.get("section", task.section)
+            task.priority = request.POST.get("priority", task.priority)
             task.save()
+
             messages.success(request, "Task updated successfully!")
         except Task.DoesNotExist:
             messages.error(request, "Task not found.")
@@ -116,6 +160,34 @@ def update_task(request):
 
     messages.error(request, "Invalid request method.")
     return redirect('todo_index')
+
+def set_priority(request):
+    if request.method == 'POST':
+        task_id = request.POST.get('task_id')
+        priority = request.POST.get('priority')
+        try:
+            task = Task.objects.get(id=task_id)
+            task.priority = priority
+            task.save()
+            messages.success(request, "Task updated successfully!")
+        except Task.DoesNotExist:
+            return JsonResponse({"error": "Task not found"}, status=404)
+
+    messages.error(request, "Invalid request method.")
+    return redirect('todo_index')
+
+def set_priority(request):
+    if request.method == 'POST':
+        task_id = request.POST.get('task_id')
+        priority = request.POST.get('priority')
+        try:
+            task = Task.objects.get(id=task_id)
+            task.priority = priority
+            task.save()
+            return redirect('todo_index')
+        except Task.DoesNotExist:
+            return HttpResponse('Task not found', status=404)
+    return HttpResponse('Invalid request', status=400)
 
 
 '''CALENDAR VIEWS'''
