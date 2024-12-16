@@ -51,9 +51,24 @@ def logout_user(request):
 
 
 # Dashboard View
-@login_required(login_url='login')
+@login_required
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    # Fetch schedules and tasks grouped by sections
+    schedules = Schedule.objects.filter(user=request.user)
+    tasks = Task.objects.all()
+
+    # Group tasks by section
+    sections_and_tasks = {}
+    for task in tasks:
+        if task.section not in sections_and_tasks:
+            sections_and_tasks[task.section] = []
+        sections_and_tasks[task.section].append(task)
+
+    context = {
+        'schedules': schedules,
+        'sections_and_tasks': sections_and_tasks,
+    }
+    return render(request, 'dashboard.html', context)
 
 '''TO-DO VIEWS'''
 @login_required(login_url='login')
