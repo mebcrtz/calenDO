@@ -3,6 +3,10 @@ import json
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse, FileResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
 from datetime import time
 from django.utils import timezone
 from django.contrib import messages
@@ -25,25 +29,20 @@ def signup_page(request):
             form.save()
             messages.success(request, 'Account created successfully!')
             return redirect('login')
-    context = {
-        'form': form
-    }
+    context = {'form': form}
     return render(request, 'auth/signup.html', context)
 
 def login_page(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-
         user = authenticate(request, username=username, password=password)
-
         if user is not None:
             login(request, user)
             return redirect('calendo-dashboard')
         else:
             messages.error(request, 'Username or password is incorrect.')
-    context = {}
-    return render(request, 'auth/login.html', context)
+    return render(request, 'auth/login.html', {})
 
 def logout_user(request):
     logout(request)
@@ -55,7 +54,7 @@ def logout_user(request):
 def dashboard(request):
     # Fetch schedules and tasks grouped by sections
     schedules = Schedule.objects.filter(user=request.user)
-    tasks = Task.objects.all()
+    tasks = Task.objects.filter(user=request.user)
 
     # Group tasks by section
     sections_and_tasks = {}
@@ -73,7 +72,7 @@ def dashboard(request):
 '''TO-DO VIEWS'''
 @login_required(login_url='login')
 def todo_index(request):
-    tasks = Task.objects.all()
+    tasks = Task.objects.filter(user=request.user)
     sections_and_tasks = {}
     for task in tasks:
         if task.section not in sections_and_tasks:
@@ -86,11 +85,9 @@ def create_task(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Task created successfully!")
-            return redirect('todo_index')  # Redirect to avoid resubmission
-        else:
-            messages.error(request, "Failed to create task. Please check the form.")
+            task = form.save(commit=False)
+            task.user = request.user  # Ensure task is associated with current user
+            task.save()
             return redirect('todo_index')
     else:
         form = TaskForm()
@@ -98,7 +95,7 @@ def create_task(request):
 
 
 def task_detail(request, task_id):
-    task = Task.objects.get(id=task_id)
+    task = get_object_or_404(Task, id=task_id, user=request.user)
     notes = Note.objects.filter(task=task).order_by('-timestamp')
     notes_data = [{'content': note.content, 'timestamp': note.timestamp.strftime('%B %d, %Y %I:%M %p')} for note in notes]
     task_data = {
@@ -157,7 +154,7 @@ def update_task(request):
 
         try:
             # Fetch the task to be updated
-            task = Task.objects.get(id=task_id)
+            task = get_object_or_404(Task, id=task_id, user=request.user)
 
             # Update task fields with data from the form
             task.task_name = request.POST.get("task_name", task.task_name)
@@ -166,8 +163,6 @@ def update_task(request):
             task.section = request.POST.get("section", task.section)
             task.priority = request.POST.get("priority", task.priority)
             task.save()
-
-            messages.success(request, "Task updated successfully!")
         except Task.DoesNotExist:
             messages.error(request, "Task not found.")
 
@@ -223,7 +218,8 @@ def get_current_week_dates():
         day_name: (start_of_week + timedelta(days=i)).date()
         for i, day_name in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
     }
-
+    
+@login_required(login_url='login')
 def calendar_index(request, schedule_name=None):
     schedules = Schedule.objects.filter(user=request.user)
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -252,6 +248,7 @@ def calendar_index(request, schedule_name=None):
     return render(request, "calendar/calendar-index.html", {
         "schedules": schedules,
         "schedule": schedule,
+        "schedule_slug": schedule.slug,
         "first_schedule": first_schedule,
         "items": items,
         "days_of_week": days_of_week,
@@ -313,9 +310,9 @@ def add_schedule_item(request, schedule_name):
     return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
 
-def update_item_details(request):
+def update_item_details(request, schedule_name, pk):
     if request.method == 'POST':
-        item_id = request.POST.get('item_id')
+        item_id = pk  # Use `pk` from the URL
         item = get_object_or_404(Item, id=item_id)
 
         item.item_name = request.POST.get('itemName')
@@ -323,6 +320,7 @@ def update_item_details(request):
         item.notes = request.POST.get('notes')
         item.save()
 
+        # Delete and recreate occurrences
         item.occurrences.all().delete()
         days = request.POST.getlist('days[]')
         start_time = request.POST.get('startTime')
@@ -339,7 +337,7 @@ def update_item_details(request):
                 occurrence.days_of_week.add(day_of_week)
 
         messages.success(request, 'Item updated successfully!')
-        return redirect("schedule_detail", schedule_name=item.schedule.slug)
+        return redirect("schedule_detail", schedule_name=schedule_name)
 
 
 def remove_schedule_item(request, pk):
@@ -365,31 +363,131 @@ def delete_schedule(request, schedule_name):
 
 def export_schedule(request, schedule_name, file_type):
     schedule = get_object_or_404(Schedule, slug=schedule_name, user=request.user)
-    items = schedule.items.all()
+    items = schedule.items.prefetch_related('occurrences__days_of_week').all()
+
+    # Helper function to sort days from Monday to Sunday
+    def sort_days(occurrence):
+        # Sort days of the week starting from Monday
+        days = [day.name for day in occurrence.days_of_week.all()]
+        days_of_week_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        sorted_days = sorted(days, key=lambda x: days_of_week_order.index(x))
+        return ', '.join(sorted_days)
 
     if file_type == 'pdf':
         buffer = io.BytesIO()
-        p = canvas.Canvas(buffer)
-        p.drawString(100, 800, f"Schedule: {schedule.schedule_name}")
-        y = 780
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        styles = getSampleStyleSheet()
+        story = []
+
+        # Title (Top of the PDF)
+        title = Paragraph(f"<b>Schedule: {schedule.schedule_name}</b>", styles['Title'])
+        story.append(title)
+        story.append(Spacer(1, 12))  # Add some space
+
+        # Table Header
+        data = [["Item Name", "Type", "Notes", "Occurrences"]]
         for item in items:
-            p.drawString(100, y, f"{item.item_name}: {item.notes}")
-            y -= 20
-        p.save()
+            occurrences_text = []
+            if item.occurrences.exists():
+                for occurrence in item.occurrences.all():
+                    days = sort_days(occurrence)  # Sort days from Monday to Sunday
+                    # Convert to 12-hour format with AM/PM
+                    time_range = f"{occurrence.start_time.strftime('%I:%M %p')} - {occurrence.end_time.strftime('%I:%M %p')}"
+                    occurrences_text.append(f"{days}: {time_range}")
+            else:
+                occurrences_text.append("No occurrences specified.")
+            data.append([item.item_name, item.get_type_display(), item.notes, '\n'.join(occurrences_text)])
+
+        # Table Style
+        table = Table(data, colWidths=[100, 100, 200, 200])
+        table.setStyle(TableStyle([ 
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Add grid lines for cell borders
+        ]))
+        story.append(table)
+
+        # Build the PDF
+        doc.build(story)
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=f"{schedule.schedule_name}.pdf")
 
     elif file_type in ['jpg', 'png']:
         image_format = 'JPEG' if file_type == 'jpg' else 'PNG'
-        img = Image.new('RGB', (800, 600), color=(255, 255, 255))
-        d = ImageDraw.Draw(img)
-        font = ImageFont.load_default()
-        y = 50
-        d.text((10, 10), f"Schedule: {schedule.schedule_name}", fill=(0, 0, 0), font=font)
-        for item in items:
-            d.text((10, y), f"{item.item_name}: {item.notes}", fill=(0, 0, 0), font=font)
-            y += 20
 
+        # Canvas Dimensions
+        img_width, img_height = 1000, max(600, len(items) * 50 + 150)
+        img = Image.new('RGB', (img_width, img_height), color=(240, 248, 255))  # Background color
+        d = ImageDraw.Draw(img)
+
+        # Fonts
+        title_font = ImageFont.truetype("arial.ttf", 36)
+        header_font = ImageFont.truetype("arial.ttf", 18)
+        item_font = ImageFont.truetype("arial.ttf", 14)
+
+        # Title
+        d.rectangle([0, 0, img_width, 80], fill=(70, 130, 180))  # Title background
+        d.text((20, 20), f"Schedule: {schedule.schedule_name}", fill=(255, 255, 255), font=title_font)
+
+        # Table Header
+        header_y = 100
+        header_padding = 10
+        table_header = ["Item Name", "Type", "Notes", "Occurrences"]
+        column_widths = [250, 150, 300, 250]  # Set column widths
+
+        # Header row with background color
+        d.rectangle([0, header_y, img_width, header_y + 40], fill=(70, 130, 180))
+        for i, header in enumerate(table_header):
+            d.text((column_widths[i] // 2 + sum(column_widths[:i]) - len(header) * 4, header_y + header_padding),
+                   header, fill=(255, 255, 255), font=header_font)
+
+        # Table Rows
+        row_y = header_y + 40
+        row_padding = 10
+
+        for idx, item in enumerate(items):
+            d.rectangle([0, row_y, img_width, row_y + 40])  # Add a rectangle for each row
+
+            # Prepare occurrences with sorted days
+            occurrences_text = []
+            if item.occurrences.exists():
+                for occurrence in item.occurrences.all():
+                    days = sort_days(occurrence)  # Sort days from Monday to Sunday
+                    # Convert to 12-hour format with AM/PM
+                    time_range = f"{occurrence.start_time.strftime('%I:%M %p')} - {occurrence.end_time.strftime('%I:%M %p')}"
+                    occurrences_text.append(f"{days}: {time_range}")
+            else:
+                occurrences_text.append("No occurrences specified.")
+
+            # Row data including occurrences with days and AM/PM times
+            row_data = [
+                item.item_name,
+                item.get_type_display(),
+                item.notes,
+                '\n'.join(occurrences_text)  # Now includes sorted days and time range
+            ]
+
+            # Draw row text
+            for i, cell in enumerate(row_data):
+                d.text((column_widths[i] // 2 + sum(column_widths[:i]) - len(cell) * 4, row_y + row_padding), cell, fill=(0, 0, 0), font=item_font)
+
+            # Draw borders around each cell
+            for i in range(len(column_widths)):
+                # Vertical lines
+                d.line([sum(column_widths[:i]), row_y, sum(column_widths[:i]), row_y + 40], fill=(0, 0, 0), width=2)
+            # Bottom border for each row
+            d.line([0, row_y + 40, img_width, row_y + 40], fill=(0, 0, 0), width=2)
+
+            row_y += 40  # Move to the next row
+
+        # Draw the final vertical line on the right side
+        d.line([img_width - 1, header_y, img_width - 1, row_y], fill=(0, 0, 0), width=2)
+
+        # Save the image
         buffer = io.BytesIO()
         img.save(buffer, format=image_format)
         buffer.seek(0)

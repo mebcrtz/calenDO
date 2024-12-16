@@ -98,7 +98,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" style="border: 1px solid #023D8A; color: #023D8A;" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="editItemForm" class="btn" style="background-color: #023D8A; color: white;">Save Changes</button>
+                <button type="submit" form="editItemDetailsForm" class="btn" style="background-color: #023D8A; color: white;">Save Changes</button>
             </div>
         </div>
     </div>
@@ -106,65 +106,79 @@
 
 <!-- JavaScript for Dynamic Time Blocks -->
 <script>
+    const scheduleSlug = "{{ schedule_slug }}";
+
+    // Function to format time to HH:mm
+    function formatTimeToHHMM(timeString) {
+        if (!timeString) {
+            console.error("Invalid time string:", timeString);
+            return "";
+        }
+
+        const [time, modifier] = timeString.split(" ");
+        let [hours, minutes] = time.split(":");
+
+        if (!hours || !minutes || !modifier) {
+            console.error("Unexpected time format:", timeString);
+            return "";
+        }
+
+        if (modifier.toLowerCase() === "p.m." && hours !== "12") {
+            hours = parseInt(hours, 10) + 12;
+        }
+        if (modifier.toLowerCase() === "a.m." && hours === "12") {
+            hours = "00";
+        }
+        return `${hours.padStart(2, "0")}:${minutes}`;
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
-        const editAddTimeButton = document.getElementById('editAddTimeButton');
-        const editTimeBlocks = document.getElementById('editTimeBlocks');
+        let selectedButtonData = {};
 
-        // Add functionality for "Add Another Time" button
-        editAddTimeButton.addEventListener('click', function () {
-            // Create a new time block
-            const newTimeBlock = document.createElement('div');
-            newTimeBlock.classList.add('time-block', 'mb-3');
-
-            // Set the inner HTML for the new block
-            newTimeBlock.innerHTML = `
-                <label>Days:</label><br>
-                {% for day in days_of_week %}
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" name="days[]" value="{{ day }}">
-                    <label class="form-check-label">{{ day }}</label>
-                </div>
-                {% endfor %}
-                <div class="row mt-2">
-                    <div class="col">
-                        <label class="form-label">Start Time:</label>
-                        <input type="time" class="form-control" name="startTime[]" required>
-                    </div>
-                    <div class="col">
-                        <label class="form-label">End Time:</label>
-                        <input type="time" class="form-control" name="endTime[]" required>
-                    </div>
-                </div>
-                <button type="button" class="btn btn-danger mt-2 remove-time-block-button">Remove</button>
-            `;
-
-            // Append the new block to the time blocks container
-            editTimeBlocks.appendChild(newTimeBlock);
-
-            // Add event listener to the remove button
-            newTimeBlock.querySelector('.remove-time-block-button').addEventListener('click', function () {
-                newTimeBlock.remove();
-            });
-        });
-
-        // Populate modal fields on button click
+        // Attach event listener to all edit buttons
         const editButtons = document.querySelectorAll('.edit-item-button');
         editButtons.forEach(button => {
             button.addEventListener('click', function () {
-                const itemId = this.getAttribute('data-item-id');
-                const itemName = this.getAttribute('data-item-name');
-                const itemType = this.getAttribute('data-item-type');
-                const itemNotes = this.getAttribute('data-item-notes');
+                // Store data from the clicked button
+                selectedButtonData = {
+                    itemId: this.getAttribute('data-item-id'),
+                    itemName: this.getAttribute('data-item-name'),
+                    occurrences: JSON.parse(this.getAttribute('data-occurrences') || '[]'),
+                };
 
-                // Populate fields with the current item data
-                document.getElementById('editItemId').value = itemId;
-                document.getElementById('editItemName').value = itemName;
-                document.getElementById(itemType === 'event' ? 'editEvent' : 'editClass').checked = true;
-                document.getElementById('editNotes').value = itemNotes;
-
-                // Update the form action
-                document.getElementById('editItemForm').action = `/schedule/item/${itemId}/update/`;
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('editItemDetailsModal'));
+                modal.show();
             });
+        });
+
+        // Attach `shown.bs.modal` event to the modal
+        const modal = document.getElementById('editItemDetailsModal');
+        modal.addEventListener('shown.bs.modal', function () {
+            const form = document.getElementById('editItemDetailsForm');
+            const startTime = document.getElementById('startTime');
+            const endTime = document.getElementById('endTime');
+
+            if (!form || !startTime || !endTime) {
+                console.error("Form or Time fields not found in DOM!");
+                return;
+            }
+
+            const { itemId, itemName, occurrences } = selectedButtonData;
+
+            form.action = `/schedule/${scheduleSlug}/item/${itemId}/update/`;
+            document.getElementById('editItemId').value = itemId;
+            document.getElementById('editItemName').value = itemName;
+
+            // Populate occurrences
+            if (occurrences.length > 0) {
+                const occurrence = occurrences[0];
+                startTime.value = formatTimeToHHMM(occurrence.start_time);
+                endTime.value = formatTimeToHHMM(occurrence.end_time);
+            } else {
+                startTime.value = "";
+                endTime.value = "";
+            }
         });
     });
 </script>
