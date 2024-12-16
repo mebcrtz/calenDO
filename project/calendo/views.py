@@ -25,25 +25,20 @@ def signup_page(request):
             form.save()
             messages.success(request, 'Account created successfully!')
             return redirect('login')
-    context = {
-        'form': form
-    }
+    context = {'form': form}
     return render(request, 'auth/signup.html', context)
 
 def login_page(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-
         user = authenticate(request, username=username, password=password)
-
         if user is not None:
             login(request, user)
             return redirect('calendo-dashboard')
         else:
             messages.error(request, 'Username or password is incorrect.')
-    context = {}
-    return render(request, 'auth/login.html', context)
+    return render(request, 'auth/login.html', {})
 
 def logout_user(request):
     logout(request)
@@ -55,7 +50,7 @@ def logout_user(request):
 def dashboard(request):
     # Fetch schedules and tasks grouped by sections
     schedules = Schedule.objects.filter(user=request.user)
-    tasks = Task.objects.all()
+    tasks = Task.objects.filter(user=request.user)
 
     # Group tasks by section
     sections_and_tasks = {}
@@ -73,7 +68,7 @@ def dashboard(request):
 '''TO-DO VIEWS'''
 @login_required(login_url='login')
 def todo_index(request):
-    tasks = Task.objects.all()
+    tasks = Task.objects.filter(user=request.user)
     sections_and_tasks = {}
     for task in tasks:
         if task.section not in sections_and_tasks:
@@ -86,11 +81,9 @@ def create_task(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Task created successfully!")
-            return redirect('todo_index')  # Redirect to avoid resubmission
-        else:
-            messages.error(request, "Failed to create task. Please check the form.")
+            task = form.save(commit=False)
+            task.user = request.user  # Ensure task is associated with current user
+            task.save()
             return redirect('todo_index')
     else:
         form = TaskForm()
@@ -98,7 +91,7 @@ def create_task(request):
 
 
 def task_detail(request, task_id):
-    task = Task.objects.get(id=task_id)
+    task = get_object_or_404(Task, id=task_id, schedule__user=request.user)
     notes = Note.objects.filter(task=task).order_by('-timestamp')
     notes_data = [{'content': note.content, 'timestamp': note.timestamp.strftime('%B %d, %Y %I:%M %p')} for note in notes]
     task_data = {
@@ -157,7 +150,7 @@ def update_task(request):
 
         try:
             # Fetch the task to be updated
-            task = Task.objects.get(id=task_id)
+            task = get_object_or_404(Task, id=task_id, schedule__user=request.user)
 
             # Update task fields with data from the form
             task.task_name = request.POST.get("task_name", task.task_name)
@@ -181,7 +174,7 @@ def set_priority(request):
         task_id = request.POST.get('task_id')
         priority = request.POST.get('priority')
         try:
-            task = Task.objects.get(id=task_id)
+            task = get_object_or_404(Task, id=task_id, schedule__user=request.user)
             task.priority = priority
             task.save()
             messages.success(request, "Task updated successfully!")
@@ -214,7 +207,8 @@ def get_current_week_dates():
         day_name: (start_of_week + timedelta(days=i)).date()
         for i, day_name in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
     }
-
+    
+@login_required(login_url='login')
 def calendar_index(request, schedule_name=None):
     schedules = Schedule.objects.filter(user=request.user)
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
