@@ -218,7 +218,7 @@ def get_current_week_dates():
         day_name: (start_of_week + timedelta(days=i)).date()
         for i, day_name in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
     }
-    
+
 @login_required(login_url='login')
 def calendar_index(request, schedule_name=None):
     schedules = Schedule.objects.filter(user=request.user)
@@ -403,7 +403,7 @@ def export_schedule(request, schedule_name, file_type):
 
         # Table Style
         table = Table(data, colWidths=[100, 100, 200, 200])
-        table.setStyle(TableStyle([ 
+        table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -428,9 +428,15 @@ def export_schedule(request, schedule_name, file_type):
         d = ImageDraw.Draw(img)
 
         # Fonts
-        title_font = ImageFont.truetype("arial.ttf", 36)
-        header_font = ImageFont.truetype("arial.ttf", 18)
-        item_font = ImageFont.truetype("arial.ttf", 14)
+        try:
+            title_font = ImageFont.truetype("arial.ttf", 36)
+            header_font = ImageFont.truetype("arial.ttf", 18)
+            item_font = ImageFont.truetype("arial.ttf", 14)
+        except IOError:
+            # Fallback to a default PIL font
+            title_font = ImageFont.load_default()
+            header_font = ImageFont.load_default()
+            item_font = ImageFont.load_default()
 
         # Title
         d.rectangle([0, 0, img_width, 80], fill=(70, 130, 180))  # Title background
@@ -492,7 +498,7 @@ def export_schedule(request, schedule_name, file_type):
 
         # Save the image
         buffer = io.BytesIO()
-        img.save(buffer, format=image_format)
+        img.save(buffer, format='JPEG' if file_type == 'jpg' else 'PNG')
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=f"{schedule.schedule_name}.{file_type}")
 
