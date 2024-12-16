@@ -1,4 +1,5 @@
 import io
+import json
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse, FileResponse
@@ -97,12 +98,32 @@ def task_detail(request, task_id):
 
 def add_note(request):
     if request.method == 'POST':
-        task_id = request.POST.get('task_id')
-        content = request.POST.get('notes')
-        task = Task.objects.get(id=task_id)
-        note = Note.objects.create(task=task, content=content, timestamp=timezone.now())
-        return redirect('todo_index')
-    return HttpResponse('Invalid request', status=400)
+        try:
+            # Parse JSON data from the request body
+            data = json.loads(request.body)
+            task_id = data.get('task_id')
+            content = data.get('notes')
+
+            # Validate the required fields
+            if not task_id or not content:
+                return JsonResponse({'error': 'Task ID and content are required.'}, status=400)
+
+            # Fetch the task and create the note
+            task = Task.objects.get(id=task_id)
+            note = Note.objects.create(task=task, content=content, timestamp=timezone.now())
+            formatted_date = note.timestamp.strftime('%B %d, %Y %I:%M %p')  # Example: December 16, 2024, 09:28 AM
+
+            return JsonResponse({
+                'id': note.id,
+                'content': note.content,
+                'timestamp': formatted_date  # Return formatted date
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+        except Task.DoesNotExist:
+            return JsonResponse({'error': 'Task not found.'}, status=404)
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)
 
 def delete_task(request, task_id):
     if request.method == 'DELETE':
