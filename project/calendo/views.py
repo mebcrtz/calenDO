@@ -111,6 +111,7 @@ def delete_task(request, task_id):
         return HttpResponse(status=204)
     return HttpResponse('Invalid request', status=400)
 
+@login_required(login_url='login')
 def update_task(request):
     if request.method == "POST":
         task_id = request.POST.get("task_id")
@@ -119,13 +120,17 @@ def update_task(request):
             return redirect('todo_index')
 
         try:
+            # Fetch the task to be updated
             task = Task.objects.get(id=task_id)
-            task.task_name = request.POST.get("task_name")
-            task.description = request.POST.get("description")
-            task.due_date = request.POST.get("due_date")
-            task.section = request.POST.get("section")
-            task.priority = request.POST.get("priority")
+
+            # Update task fields with data from the form
+            task.task_name = request.POST.get("task_name", task.task_name)
+            task.description = request.POST.get("description", task.description)
+            task.due_date = request.POST.get("due_date", task.due_date)
+            task.section = request.POST.get("section", task.section)
+            task.priority = request.POST.get("priority", task.priority)
             task.save()
+
             messages.success(request, "Task updated successfully!")
         except Task.DoesNotExist:
             messages.error(request, "Task not found.")

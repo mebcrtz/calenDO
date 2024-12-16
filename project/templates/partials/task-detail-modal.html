@@ -9,18 +9,20 @@
 
             <!-- Modal Body -->
             <div class="modal-body">
-                <form id="taskDetailForm" method="post" action="{% url 'add_note' %}">
+                <form id="taskDetailForm" method="POST" action="{% url 'update_task' %}">
                     {% csrf_token %}
                     <input type="hidden" id="modalTaskId" name="task_id">
 
                     <!-- Task Name -->
                     <div class="mb-3">
-                        <h3 id="modalTaskName" class="form-control-plaintext" style="color: #023D8A; font-size: 1.5rem;"></h3>
+                        <label for="modalTaskName" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Task Name</label>
+                        <input type="text" id="modalTaskName" name="task_name" class="form-control" style="color: #023D8A; font-size: 1.5rem;">
                     </div>
 
                     <!-- Task Description -->
                     <div class="mb-3">
-                        <p id="modalTaskDescription" class="form-control-plaintext" style="color: #555; font-size: 0.95rem;"></p>
+                        <label for="modalTaskDescription" class="form-label" style="color: #555; font-size: 0.95rem;">Description</label>
+                        <textarea id="modalTaskDescription" name="description" class="form-control" style="color: #555; font-size: 0.95rem;"></textarea>
                     </div>
 
                     <!-- Notes Section -->
@@ -43,13 +45,20 @@
                     <!-- Additional Information Section -->
                     <div class="d-flex justify-content-between mt-3" style="font-size: 0.9rem; color: #555;">
                         <div>
-                            <strong style="color: #023D8A;">Due Date:</strong> <span id="modalDueDate"></span>
+                            <label for="modalDueDate" class="form-label" style="color: #023D8A;">Due Date</label>
+                            <input type="date" id="modalDueDate" name="due_date" class="form-control" style="color: #555;">
                         </div>
                         <div>
-                            <strong style="color: #023D8A;">Section:</strong> <span id="modalSection"></span>
+                            <label for="modalSection" class="form-label" style="color: #023D8A;">Section</label>
+                            <input type="text" id="modalSection" name="section" class="form-control" style="color: #555;">
                         </div>
                         <div>
-                            <strong style="color: #023D8A;">Priority:</strong> <span id="modalPriority"></span>
+                            <label for="modalPriority" class="form-label" style="color: #023D8A;">Priority</label>
+                            <select id="modalPriority" name="priority" class="form-select">
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
                         </div>
                     </div>
                 </form>

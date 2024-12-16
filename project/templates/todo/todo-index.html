@@ -236,25 +236,27 @@
         const taskModal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
         const deleteSelectedTasksBtn = document.getElementById('deleteSelectedTasksBtn');
         let selectedTasks = [];
-
+    
         function attachEventListeners() {
             const taskCards = document.querySelectorAll('.task-card');
             taskCards.forEach(card => {
                 card.addEventListener('click', (event) => {
                     if (event.target.classList.contains('check-off-btn')) {
-                        return;
+                        return; // Skip checkbox clicks
                     }
                     const taskId = card.getAttribute('data-task-id');
                     fetch(`/todo/task-detail/${taskId}/`)
                         .then(response => response.json())
                         .then(data => {
-                            document.getElementById('modalTaskId').value = taskId;
-                            document.getElementById('modalTaskName').innerText = data.task_name;
-                            document.getElementById('modalTaskDescription').innerText = data.description;
-                            document.getElementById('modalDueDate').innerText = data.due_date;
-                            document.getElementById('modalSection').innerText = data.section;
-                            document.getElementById('modalPriority').innerText = data.priority;
-
+                            // Populate the modal with data
+                            document.getElementById('modalTaskId').value = taskId; // Hidden input
+                            document.getElementById('modalTaskName').value = data.task_name; // Editable input
+                            document.getElementById('modalTaskDescription').value = data.description; // Editable textarea
+                            document.getElementById('modalDueDate').value = data.due_date; // Editable input
+                            document.getElementById('modalSection').value = data.section; // Editable input
+                            document.getElementById('modalPriority').value = data.priority; // Editable select
+    
+                            // Populate notes
                             const notesList = document.getElementById('notesList');
                             notesList.innerHTML = '';
                             data.notes.forEach(note => {
@@ -263,13 +265,13 @@
                                 noteElement.innerHTML = `<small style="color: gray;">${note.timestamp}</small><p>${note.content}</p>`;
                                 notesList.appendChild(noteElement);
                             });
-
+    
                             taskModal.show();
                         })
                         .catch(error => console.error('Error fetching task details:', error));
                 });
             });
-
+    
             const checkOffButtons = document.querySelectorAll('.check-off-btn');
             checkOffButtons.forEach(button => {
                 button.addEventListener('change', (event) => {
@@ -284,9 +286,9 @@
                 });
             });
         }
-
+    
         attachEventListeners();
-
+    
         deleteSelectedTasksBtn.addEventListener('click', () => {
             selectedTasks.forEach(taskId => {
                 fetch(`/todo/delete-task/${taskId}/`, {
@@ -307,7 +309,7 @@
             selectedTasks = [];
             deleteSelectedTasksBtn.style.display = 'none';
         });
-
+    
         // Filter tasks by priority
         document.getElementById('applyPriorityFilter').addEventListener('click', () => {
             const selectedPriority = document.getElementById('priorityFilter').value;
@@ -337,16 +339,16 @@
                 modalBackdrop.remove();
             }
         });
-
+    
         // Sort sections alphabetically
         document.getElementById('sortSectionAscBtn').addEventListener('click', () => {
             sortSections(true);
         });
-
+    
         document.getElementById('sortSectionDescBtn').addEventListener('click', () => {
             sortSections(false);
         });
-
+    
         function sortSections(ascending) {
             const sections = Array.from(document.querySelectorAll('.section-container'));
             sections.sort((a, b) => {
