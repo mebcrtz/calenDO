@@ -23,32 +23,59 @@
         font-weight: 800;
     }
     .section-content {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 20px;
         flex-wrap: wrap;
     }
     .card {
         background: white;
         border-radius: 8px;
-        padding: 15px;
+        padding: 20px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        width: 180vh;
-        height: 25vh;
-        text-align: center;
-        margin-left: 50px;
+        width: auto;
+        height: auto;
+        text-align: left;
+        margin-left: 20px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
     }
     .card h3 {
-        font-size: 18px;
+        font-size: 20px;
         margin-bottom: 10px;
+        color: #0a2a66;
     }
     .card p {
         font-size: 14px;
         color: #666;
-    }
-    .card img {
-        width: 100%;
-        border-radius: 5px;
         margin-bottom: 10px;
+    }
+    .card a {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #0a2a66;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    .card a:hover {
+        background-color: #084298;
+    }
+    .card ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .card ul li {
+        margin-bottom: 10px;
+    }
+    .card ul li strong {
+        display: block;
+        margin-bottom: 5px;
     }
     .view-all {
         text-align: right;
@@ -133,4 +160,4 @@
             </div>
         </div>
     </div>
-    {% endblock %}
+{% endblock %}
