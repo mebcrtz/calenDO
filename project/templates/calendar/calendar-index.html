@@ -31,6 +31,7 @@
     }
     .fc-button:hover {
         background-color: #0056b3;
+        transition: background-color 0.3s ease;
     }
     .fc-daygrid-day {
         border: 1px solid #ddd;
@@ -42,30 +43,49 @@
     }
     .fc-day:hover {
         background-color: #e0f7fa; /* Light blue background on hover */
+        transition: background-color 0.3s ease;
     }
     .fc-timegrid-slot:hover {
         background-color: #e0f7fa; /* Light blue background on hover for time rows */
+        transition: background-color 0.3s ease;
     }
     .fc-timegrid-col .fc-timegrid-slot:hover {
         background-color: #e0f7fa; /* Light blue background on hover for specific cell */
+        transition: background-color 0.3s ease;
     }
     .fc-timegrid-slot-lane:hover {
         background-color: #e0f7fa; /* Light blue background on hover for specific cell */
+        transition: background-color 0.3s ease;
     }
     .create-btn:hover {
         background-color: #0056b3;
+        transition: background-color 0.3s ease;
     }
     .btn-block:hover {
         background-color: #0056b3;
+        transition: background-color 0.3s ease;
     }
     .fc-event-title {
         text-align: center; /* Center align the text of calendar events */
         font-family: Arial, sans-serif;
         font-weight: bold;
+        transition: color 0.3s ease;
     }
     .fc-event-time {
         text-align: center; /* Center align the time of calendar events */
         font-style: italic;
+        transition: color 0.3s ease;
+    }
+    .fc-event:hover {
+        background-color: #e0f7fa; /* Light blue background on hover */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .fc-event-title, .fc-event-time {
+        transition: color 0.3s ease;
+    }
+    .fc-event:hover .fc-event-title, .fc-event:hover .fc-event-time {
+        color: #007bff; /* Change text color on hover */
     }
 
     /* General Styles */
@@ -319,7 +339,25 @@
             },
             firstDay: 1, // Set the first day of the week to Monday
             allDaySlot: false, // Remove the all-day row
-            events: {{ events|safe }}
+            events: {{ events|safe }},
+            eventOverlap: false, // Prevent events from stacking
+            slotEventOverlap: false, // Prevent events from overlapping in the same slot
+            eventMouseEnter: function(info) {
+                info.el.style.transition = 'background-color 0.3s ease';
+                info.el.style.backgroundColor = '#e0f7fa';
+                info.el.querySelector('.fc-event-title').style.transition = 'color 0.3s ease';
+                info.el.querySelector('.fc-event-title').style.color = '#007bff';
+                info.el.querySelector('.fc-event-time').style.transition = 'color 0.3s ease';
+                info.el.querySelector('.fc-event-time').style.color = '#007bff';
+            },
+            eventMouseLeave: function(info) {
+                info.el.style.transition = 'background-color 0.3s ease';
+                info.el.style.backgroundColor = '';
+                info.el.querySelector('.fc-event-title').style.transition = 'color 0.3s ease';
+                info.el.querySelector('.fc-event-title').style.color = '';
+                info.el.querySelector('.fc-event-time').style.transition = 'color 0.3s ease';
+                info.el.querySelector('.fc-event-time').style.color = '';
+            }
         });
         calendar.render();
     });
