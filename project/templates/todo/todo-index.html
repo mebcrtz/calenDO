@@ -116,10 +116,10 @@
         margin-right: 10px; 
         transition: transform 0.3s, box-shadow 0.3s;
     }
-    .section-container:hover {
+    /* .section-container:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
+    } */
     .tasks-wrapper {
         max-height: 230px; 
         overflow-y: auto; 
@@ -203,7 +203,7 @@
         <div class="d-flex flex-row">
             {% if sections_and_tasks %}
                 {% for section, tasks in sections_and_tasks.items %}
-                <div class="section-container animate__animated animate__fadeInUp">
+                <div class="section-container">
                     <div class="card">
                         <div class="card-header bg-light">{{ section }}</div>
                         <div class="card-body tasks-wrapper">
