@@ -8,7 +8,6 @@ urlpatterns = [
     path('todo/task-detail/<int:task_id>/', views.task_detail, name='task_detail'),
     path('todo/update-task/', views.update_task, name='update_task'),
     path('set-priority/', views.set_priority, name='set_priority'),
-    path('task-detail/<int:task_id>/', views.task_detail, name='task_detail'),
     path('add-note/', views.add_note, name='add_note'),
     path('delete-task/<int:task_id>/', views.delete_task, name='delete_task'),
 

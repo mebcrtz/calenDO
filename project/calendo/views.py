@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from datetime import time
 from django.utils import timezone
 from django.contrib import messages
+from django.views.decorators.http import require_http_methods
 
 from .forms import *
 from .models import Task, Note
@@ -57,12 +58,14 @@ def add_note(request):
         return redirect('todo_index')
     return HttpResponse('Invalid request', status=400)
 
+@require_http_methods(["DELETE"])
 def delete_task(request, task_id):
-    if request.method == 'DELETE':
-        task = get_object_or_404(Task, id=task_id)
+    try:
+        task = Task.objects.get(id=task_id)
         task.delete()
-        return HttpResponse(status=204)
-    return HttpResponse('Invalid request', status=400)
+        return JsonResponse({'message': 'Task deleted successfully'}, status=200)
+    except Task.DoesNotExist:
+        return JsonResponse({'error': 'Task not found'}, status=404)
 
 def update_task(request):
     if request.method == "POST":
