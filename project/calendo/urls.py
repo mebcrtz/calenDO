@@ -10,6 +10,7 @@ urlpatterns = [
     path('set-priority/', views.set_priority, name='set_priority'),
     path('task-detail/<int:task_id>/', views.task_detail, name='task_detail'),
     path('todo/add-note/', views.add_note, name='add_note'),
+    path('list-view/', views.list_view, name='list-view'),
     path('delete-task/<int:task_id>/', views.delete_task, name='delete_task'),
 
     path('calendar/', views.calendar_index, name='calendar_index'),
