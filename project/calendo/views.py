@@ -159,8 +159,6 @@ def update_task(request):
             task.section = request.POST.get("section", task.section)
             task.priority = request.POST.get("priority", task.priority)
             task.save()
-
-            messages.success(request, "Task updated successfully!")
         except Task.DoesNotExist:
             messages.error(request, "Task not found.")
 
