@@ -46,6 +46,14 @@
         font-size: 18px;
         font-weight: bold;
         margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .section-header .edit-btn {
+        font-size: 14px;
+        cursor: pointer;
+        color: #023D8A;
     }
 
     /* Task Card */
@@ -55,16 +63,24 @@
         padding: 15px;
         margin-bottom: 15px;
         display: block;
+        position: relative;
     }
     .task-header {
         display: flex;
         align-items: center;
         gap: 10px;
+        justify-content: space-between;
     }
     .task-title {
         color: #023D8A;
         font-size: 16px;
         font-weight: bold;
+    }
+    .task-title.editable {
+        border: 1px solid #DDD;
+        padding: 5px;
+        border-radius: 5px;
+        background-color: #F9F9F9;
     }
     .task-date {
         color: #023D8A;
@@ -75,7 +91,17 @@
         font-size: 14px;
         margin-top: 10px;
     }
-    
+    .edit-task-btn {
+        color: #023D8A;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .delete-task-btn {
+        color: #D9534F;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
     /* Add Task Button */
     .add-task-btn {
         width: 100%;
@@ -142,12 +168,16 @@
         {% if sections_and_tasks %}
             {% for section, tasks in sections_and_tasks.items %}
             <div class="section-container">
-                <div class="section-header">{{ section }}</div>
+                <div class="section-header">
+                    <span class="section-title">{{ section }}</span>
+                    <span class="edit-btn" data-section="{{ section }}">Edit</span>
+                </div>
                 {% for task in tasks %}
                 <div class="task-card" data-task-id="{{ task.id }}" data-task-priority="{{ task.priority }}" data-task-due-date="{{ task.due_date }}">
                     <div class="task-header">
-                        <input type="checkbox" class="form-check-input" data-task-id="{{ task.id }}">
                         <div class="task-title">{{ task.task_name }}</div>
+                        <span class="edit-task-btn">Edit</span> |
+                        <span class="delete-task-btn" data-task-id="{{ task.id }}">Delete</span>
                     </div>
                     <div class="task-desc">{{ task.description }}</div>
                     <div class="task-date">{{ task.due_date }}</div>
@@ -170,21 +200,6 @@
         {% endif %}
     </div>
     <button id="deleteSelectedTasksBtn" class="btn btn-danger delete-btn" style="display: none;">Delete Selected Tasks</button>
-</div>
-</div>
-
-<div class="modal fade" id="sortModal" tabindex="-1" aria-labelledby="sortModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="sortModalLabel">Sort Tasks</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <button id="sortSectionAscBtn" class="btn btn-primary mt-2">Sort Sections A-Z</button>
-            <button id="sortSectionDescBtn" class="btn btn-secondary mt-2">Sort Sections Z-A</button>
-        </div>
-    </div>
 </div>
 </div>
 
@@ -215,6 +230,42 @@
         calendarViewBtn.addEventListener('click', () => {
             taskContainer.classList.remove('list-view');
             taskContainer.classList.add('calendar-view');
+        });
+
+        // Edit Section Title
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const section = button.getAttribute('data-section');
+                const newTitle = prompt("Edit Section Title", section);
+                if (newTitle) {
+                    // Update backend with AJAX or form submission (not implemented here)
+                    button.previousElementSibling.textContent = newTitle;
+                }
+            });
+        });
+
+        // Edit Task Title
+        document.querySelectorAll('.edit-task-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const taskTitleElement = button.previousElementSibling;
+                const currentTitle = taskTitleElement.textContent;
+                const newTitle = prompt("Edit Task Title", currentTitle);
+                if (newTitle) {
+                    // Update backend with AJAX or form submission (not implemented here)
+                    taskTitleElement.textContent = newTitle;
+                }
+            });
+        });
+
+        // Delete Task
+        document.querySelectorAll('.delete-task-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const taskId = button.getAttribute('data-task-id');
+                if (confirm("Are you sure you want to delete this task?")) {
+                    // Delete from backend with AJAX or form submission (not implemented here)
+                    button.closest('.task-card').remove();
+                }
+            });
         });
     });
 </script>
