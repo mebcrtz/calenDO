@@ -50,7 +50,7 @@
                                         <label for="endTime" class="form-label fw-bold" style="color: #1E4E9D; font-size: 0.8rem;">End Time:</label>
                                         <input type="time" class="form-control" name="endTime[]" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);" required>
                                     </div>                                                                                                       
-                                </div>                                 
+                                </div>
                             </div>
                         </div>
 
@@ -83,22 +83,64 @@
         </div>
     </div>
 </div>
-
 <script>
-    document.getElementById('addTimeButton').addEventListener('click', function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        const addTimeButton = document.getElementById('addTimeButton');
         const timeBlocks = document.getElementById('timeBlocks');
-        const existingBlock = document.querySelector('.time-block');
-        const newBlock = existingBlock.cloneNode(true);
 
-        // Clear inputs in the cloned block
-        newBlock.querySelectorAll('input').forEach(input => {
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
+        // Function to add a remove button to a time block
+        function addRemoveButton(timeBlock) {
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'btn btn-danger mt-2 remove-time-block-button';
+            removeButton.textContent = 'Remove';
+            removeButton.addEventListener('click', function () {
+                timeBlock.remove();
+                updateRemoveButtons();  // Update visibility of remove buttons after a block is removed
+            });
+            timeBlock.appendChild(removeButton);
+        }
+
+        // Function to update the visibility of remove buttons
+        function updateRemoveButtons() {
+            const timeBlockCount = document.querySelectorAll('.time-block').length;
+            const removeButtons = document.querySelectorAll('.remove-time-block-button');
+            removeButtons.forEach(button => {
+                button.style.display = timeBlockCount > 1 ? 'inline-block' : 'none';
+            });
+        }
+
+        // Add functionality for "Add Another Time" button
+        addTimeButton.addEventListener('click', function () {
+            const existingBlock = document.querySelector('.time-block');
+            const newBlock = existingBlock.cloneNode(true);
+
+            // Clear inputs in the cloned block
+            newBlock.querySelectorAll('input').forEach(input => {
+                if (input.type === 'checkbox') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+            });
+
+            // Remove any existing remove button in the cloned block
+            newBlock.querySelectorAll('.remove-time-block-button').forEach(button => button.remove());
+
+            // Add remove button to the new block
+            addRemoveButton(newBlock);
+
+            timeBlocks.appendChild(newBlock);
+            updateRemoveButtons();  // Update visibility of remove buttons after adding a new block
         });
 
-        timeBlocks.appendChild(newBlock);
+        // Initial setup: add a remove button to the first time block manually since it's not dynamically created
+        const initialBlock = document.querySelector('.time-block');
+        if (initialBlock) {
+            addRemoveButton(initialBlock);
+        }
+
+        // Ensure initial state of remove buttons is correct
+        updateRemoveButtons();
     });
 </script>

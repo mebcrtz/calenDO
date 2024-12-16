@@ -43,7 +43,7 @@
 
                     <!-- Occurrences -->
                     <h6>Occurrences:</h6>
-                    <div>
+                    <div id="editTimeBlocks">
                         <label class="form-label">Days:</label>
                         <div class="mb-2">
                             <label class="form-check-inline">
@@ -135,10 +135,16 @@
                         <input type="time" class="form-control" name="endTime[]" required>
                     </div>
                 </div>
+                <button type="button" class="btn btn-danger mt-2 remove-time-block-button">Remove</button>
             `;
 
             // Append the new block to the time blocks container
             editTimeBlocks.appendChild(newTimeBlock);
+
+            // Add event listener to the remove button
+            newTimeBlock.querySelector('.remove-time-block-button').addEventListener('click', function () {
+                newTimeBlock.remove();
+            });
         });
 
         // Populate modal fields on button click

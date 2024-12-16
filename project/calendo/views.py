@@ -206,7 +206,6 @@ def set_priority(request):
 
 
 '''CALENDAR VIEWS'''
-
 def get_current_week_dates():
     """Get the dates for the current week's Monday through Sunday."""
     today = datetime.today()
