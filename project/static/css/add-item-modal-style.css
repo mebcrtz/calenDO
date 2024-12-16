@@ -1,0 +1,138 @@
+/* Add Item Modal Styling */
+.modal-content {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal Header */
+.modal-header {
+    background-color: #023D8A;
+    color: white;
+    border-radius: 10px 10px 0 0;
+}
+
+/* Modal Title */
+.modal-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+/* Close Button */
+.btn-close {
+    filter: invert(1);
+}
+
+/* Button Group for Event or Class */
+.btn-group .btn {
+    padding: 5px 20px;
+    font-weight: 600;
+    color: red;
+    border-color: red;
+}
+
+/* Item Name Input */
+#itemName {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px;
+}
+
+/* Time Blocks */
+#timeBlocks .time-block {
+    margin-bottom: 1.5rem;
+}
+
+#timeBlocks .form-check-label {
+    color: #023D8A;
+    font-weight: 600;
+}
+
+#timeBlocks input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+/* Start Time and End Time Input Fields */
+#timeBlocks .row .col {
+    padding: 0.5rem;
+}
+
+#timeBlocks input[type="time"] {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px;
+}
+
+/* Add Another Time Button */
+#addTimeButton {
+    color: #023D8A;
+    border-color: #023D8A;
+    font-weight: 600;
+    background-color: transparent;
+    border: 1px solid #023D8A;
+    padding: 6px 18px;
+    margin-top: 1rem;
+}
+
+/* Notes Textarea */
+#notes {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+    resize: none;
+}
+
+/* Modal Footer Buttons */
+.modal-footer .btn-outline-secondary {
+    border-color: #ddd;
+    color: #023D8A;
+    border-radius: 5px;
+    padding: 10px 20px;
+}
+
+.modal-footer .btn {
+    background-color: #023D8A;
+    color: white;
+    border-radius: 5px;
+    padding: 12px;
+    width: 100%;
+}
+
+/* Add Margin to Bottom of the Form */
+.modal-body .mb-3 {
+    margin-bottom: 1rem;
+}
+
+/* Form Label Styling */
+.form-label {
+    font-weight: 600;
+    color: #023D8A;
+}
+
+/* Radio Button for Event/Class */
+.btn-check:checked + .btn-outline-primary {
+    background-color: #023D8A;
+    color: white;
+    border-color: #023D8A;
+}
+
+/* Modal Customizations */
+.modal-body {
+    padding: 2rem;
+}
+
+/* Extra Customization for Forms */
+input[type="text"], input[type="time"], textarea {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px;
+    width: 100%;
+}
+
+/* Button Styling */
+.btn {
+    font-weight: 600;
+    border-radius: 5px;
+}
+

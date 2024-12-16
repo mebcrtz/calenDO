@@ -1,15 +1,19 @@
 <!-- Add Item Modal -->
 <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 550px; height: auto;">
+        <div class="modal-content" style="border-radius: 8px; border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); height: auto; display: flex; flex-direction: column;">
+            <!-- Modal Header -->
+            <div class="modal-header" style="background-color: #1E4E9D; color: white; padding: 10px 15px;">
                 <h5 class="modal-title" id="addItemModalLabel">Create Item</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1); font-size: 1rem;"></button>
             </div>
-            <div class="modal-body">
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding: 15px 20px;">
                 {% if schedule %}
                     <form id="addItemForm" method="POST" action="{% url 'add_schedule_item' schedule_name=schedule.slug %}">
                         {% csrf_token %}
+                        
                         <div class="btn-group w-100 mb-3" role="group" aria-label="Event or Class">
                             <input type="radio" class="btn-check" name="itemType" id="event" value="event" autocomplete="off" checked>
                             <label class="btn btn-outline-primary" for="event">Event</label>
@@ -17,40 +21,51 @@
                             <input type="radio" class="btn-check" name="itemType" id="class" value="class" autocomplete="off">
                             <label class="btn btn-outline-primary" for="class">Class</label>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="itemName" class="form-label">Item Name:</label>
-                            <input type="text" class="form-control" name="itemName" id="itemName" required>
+                        
+                        <!-- Item Name -->
+                        <div class="mb-2">
+                            <label for="itemName" class="form-label fw-bold" style="color: #1E4E9D; font-size: 0.8rem;">Item Name:</label>
+                            <input type="text" class="form-control mx-auto" name="itemName" id="itemName" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.8rem; padding: 0.3rem; width: 100%; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);" required>
                         </div>
-
+                        
+                        <!-- Time Blocks -->
                         <div id="timeBlocks">
-                            <div class="time-block mb-3">
-                                <label>Days:</label><br>
-                                {% for day in days_of_week %}
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="days[]" id="{{ day|lower }}" value="{{ day }}">
-                                    <label class="form-check-label" for="{{ day|lower }}">{{ day }}</label>
+                            <div class="time-block mb-3" id="timeBlockTemplate">
+                                <label class="fw-bold" style="color: #1E4E9D; font-size: 0.8rem;">Days:</label>
+                                <div class="d-flex justify-content-between">
+                                    {% for day in days_of_week %}
+                                    <div class="text-center" style="width: calc(100% / 7);">
+                                        <label for="{{ day|lower }}" style="display: block; font-size: 0.8rem; color: #1E4E9D;">{{ day }}</label>
+                                        <input class="form-check-input mt-1" type="checkbox" name="days[]" id="{{ day|lower }}" value="{{ day }}" style="box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                                    </div>
+                                    {% endfor %}
                                 </div>
-                                {% endfor %}
                                 <div class="row mt-2">
-                                    <div class="col">
-                                        <label for="startTime" class="form-label">Start Time:</label>
-                                        <input type="time" class="form-control" name="startTime[]" required>
+                                    <div class="col-6 mb-2">
+                                        <label for="startTime" class="form-label fw-bold" style="color: #1E4E9D; font-size: 0.8rem;">Start Time:</label>
+                                        <input type="time" class="form-control" name="startTime[]" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);" required>
                                     </div>
-                                    <div class="col">
-                                        <label for="endTime" class="form-label">End Time:</label>
-                                        <input type="time" class="form-control" name="endTime[]" required>
-                                    </div>
-                                </div>
+                                    
+                                    <div class="col-6 mb-2">
+                                        <label for="endTime" class="form-label fw-bold" style="color: #1E4E9D; font-size: 0.8rem;">End Time:</label>
+                                        <input type="time" class="form-control" name="endTime[]" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);" required>
+                                    </div>                                                                                                       
+                                </div>                                 
                             </div>
                         </div>
 
-                        <button type="button" class="btn btn-secondary" id="addTimeButton">Add Another Time</button>
-
-                        <div class="mb-3 mt-3">
-                            <label for="notes" class="form-label">Notes:</label>
-                            <textarea class="form-control" name="notes" id="notes" rows="3"></textarea>
+                        <!-- Notes -->
+                        <div class="mb-3 mt-2">
+                            <label for="notes" class="form-label fw-bold" style="color: #1E4E9D; font-size: 0.8rem;">Notes:</label>
+                            <input type="text" class="form-control" name="notes" id="notes" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.8rem; width: 100%; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"></input>
                         </div>
+
+                        <!-- Add Another Time -->
+                        <button type="button" class="btn d-flex align-items-center" id="addTimeButton" 
+                        style="background-color: white; color: #1E4E9D; font-size: 0.8rem; border: 2px solid #1E4E9D; border-radius: 10px;">
+                        <i class="bi bi-plus-circle me-2"></i> Add Another Time
+                        </button>
+
                     </form>
                 {% else %}
                     <form id="addItemForm">
@@ -58,10 +73,13 @@
                     </form>
                 {% endif %}
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="addItemForm" class="btn btn-primary">Save</button>
-            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer d-flex justify-content-end" style="padding: 15px 15px;">
+                <button type="submit" form="addItemForm" class="btn btn-primary btn-sm d-flex align-items-center" style="background-color: #1E4E9D; font-size: 0.8rem; color: white; border: 5px solid #1E4E9D; border-radius: 10px;">
+                    <i class="bi bi-save me-2"></i> Save
+                </button>
+            </div>            
         </div>
     </div>
 </div>
