@@ -368,5 +368,48 @@
             }
         }
     });
+    document.addEventListener('DOMContentLoaded', () => {
+        const addNoteButton = document.getElementById('addNoteButton');
+        const notesList = document.getElementById('notesList');
+        const modalNotes = document.getElementById('modalNotes');
+        const modalTaskId = document.getElementById('modalTaskId');
+    
+        addNoteButton.addEventListener('click', () => {
+            const taskId = modalTaskId.value;
+            const noteContent = modalNotes.value;
+    
+            if (!noteContent.trim()) {
+                alert("Note content cannot be empty.");
+                return;
+            }
+    
+            fetch('/todo/add-note/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: JSON.stringify({ task_id: taskId, notes: noteContent }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Failed to add note: " + data.error);
+                    return;
+                }
+    
+                // Add the new note to the notes list
+                const noteElement = document.createElement('div');
+                noteElement.classList.add('note');
+                noteElement.innerHTML = `<small style="color: gray;">${data.timestamp}</small><p>${data.content}</p>`;
+                notesList.appendChild(noteElement);
+    
+                // Clear the textarea
+                modalNotes.value = '';
+            })
+            .catch(error => console.error('Error adding note:', error));
+        });
+    });
+    
 </script>
 {% endblock %}
