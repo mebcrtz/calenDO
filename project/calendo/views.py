@@ -5,6 +5,7 @@ from django.http import JsonResponse, HttpResponse, FileResponse
 from datetime import time
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.utils.text import slugify
 from django.urls import reverse
 from reportlab.pdfgen import canvas
@@ -46,12 +47,14 @@ def logout_user(request):
     logout(request)
     return redirect('login')
 
+
 # Dashboard View
+@login_required(login_url='login')
 def dashboard(request):
     return render(request, 'dashboard.html')
 
 '''TO-DO VIEWS'''
-
+@login_required(login_url='login')
 def todo_index(request):
     # Organize tasks by section
     tasks = Task.objects.all()
