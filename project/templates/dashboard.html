@@ -118,7 +118,7 @@
                                         <strong>{{ task.task_name }}</strong>
                                         <p>{{ task.description }}</p>
                                         <p>Due: {{ task.due_date|date:"F j, Y" }}</p>
-                                        <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-primary">View Details</a>
+                                        <a href="{% url 'todo_index' %}" class="btn btn-sm btn-primary">View Details</a>
                                     </li>
                                 {% endfor %}
                             </ul>
