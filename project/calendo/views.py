@@ -80,6 +80,16 @@ def update_task(request):
     messages.error(request, "Invalid request method.")
     return redirect('todo_index')
 
+def list_view(request):
+    # Organize tasks by section
+    tasks = Task.objects.all()
+    sections_and_tasks = {}
+    for task in tasks:
+        if task.section not in sections_and_tasks:
+            sections_and_tasks[task.section] = []
+        sections_and_tasks[task.section].append(task)
+    return render(request, 'todo/list-view.html', {'sections_and_tasks': sections_and_tasks})
+
 
 '''CALENDAR VIEWS'''
 

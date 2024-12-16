@@ -1,0 +1,200 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #EFEFEF;
+}
+
+.calen {
+    color: #2B2B2B;
+}
+
+.do {
+    color: #023D8A;
+}
+
+.calendo {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.task-card {
+    background-color: #E9F2FF;
+    color: #023D8A;
+    width: 250px;
+    margin-right: 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: hidden;
+}
+
+.task-title {
+    color: #023D8A;
+    display: block;
+    align-items: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.task-content {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.task-text {
+    color: black;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.task-date {
+    color: #023D8A;
+}
+
+.check-off-btn {
+    color: #023D8A;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.add-task-btn {
+    color: #023D8A;
+}
+
+.add-task-btn:hover {
+    background-color: #023D8A;
+    color: white;
+}
+
+.no-border-btn {
+    border: none;
+    background: none;
+    color: #2B2B2B;
+}
+
+.task-container {
+    background-color: #ffffff;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    width: 95%;
+    height: 65%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.sticky-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    background-color: #ffffff;
+    padding: 20px 30px;
+    border-radius: 20px;
+}
+
+.task-view-header {
+    display: flex;
+    gap: 20px; /* Add gap between buttons */
+}
+
+.task-view-header button {
+    border: none;
+    background: none;
+    color: #2B2B2B;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.body-container {
+    margin-top: 40px;
+    margin-left: 50px;
+    margin-right: 50px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-container {
+    display: inline-block;
+    vertical-align: top;
+    width: 320px;
+    margin-right: 10px;
+}
+
+.tasks-wrapper {
+    max-height: 230px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.tasks-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tasks-wrapper::-webkit-scrollbar-thumb {
+    background-color: #023D8A;
+    border-radius: 4px;
+}
+
+.tasks-wrapper::-webkit-scrollbar-track {
+    background-color: rgba(233, 242, 255, 0.5);
+}
+
+.tasks-wrapper:hover::-webkit-scrollbar-thumb {
+    background-color: #023D8A;
+}
+
+.tasks-wrapper:hover::-webkit-scrollbar-track {
+    background-color: #E9F2FF;
+}
+
+.add-task-container {
+    margin-top: 10px;
+}
+
+.modal-lg-custom {
+    max-width: 60%;
+}
+
+.save-btn {
+    background-color: #023D8A;
+    border-color: #023D8A;
+}
+
+.save-btn:hover {
+    background-color: #022c6a;
+    border-color: #022c6a;
+}
+
+.delete-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* List View Styles */
+.list-view .task-container {
+    display: block;
+}
+
+.list-view .section-container {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.list-view .task-card {
+    width: 100%;
+    margin-bottom: 10px;
+}

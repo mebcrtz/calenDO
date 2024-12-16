@@ -7,6 +7,7 @@ urlpatterns = [
     path('todo/create-task/', views.create_task, name='create_task'),
     path('todo/task-detail/<int:task_id>/', views.task_detail, name='task_detail'),
     path('todo/update-task/', views.update_task, name='update_task'),
+    path('list-view/', views.list_view, name='list-view'),
 
     path('calendar/', views.calendar_index, name='calendar_index'),
     path('calendar/<slug:schedule_name>/', views.calendar_index, name='schedule_detail'),

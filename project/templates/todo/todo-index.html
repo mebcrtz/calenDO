@@ -1,5 +1,7 @@
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 {% extends "partials/base.html" %}
@@ -24,86 +26,59 @@
     }
     .calendo {
         font-size: 35px; 
-        font-weight: bold; 
+        font-weight: 800; 
     }
-    .task-card {
-        background-color: #E9F2FF; 
-        color: #023D8A; 
-        width: 250px; 
-        margin-right: 10px; 
-        word-wrap: break-word; 
-        overflow-wrap: break-word; 
-        overflow: hidden; 
-    }
-    .task-title {
-        color: #023D8A; 
-        display: block; 
-        align-items: center;
-        word-wrap: break-word; 
-        overflow-wrap: break-word; 
-        font-size: 16px; 
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
-        width: 100%;
-    }
-    .task-content {
-        display: flex;
-        flex-direction: column;
-        margin-left: 10px; 
-        word-wrap: break-word; 
-        overflow-wrap: break-word; 
-    }
-    .task-text {
-        color: black; 
-        word-wrap: break-word; 
-        overflow-wrap: break-word; 
-    }
-    .task-date {
-        color: #023D8A; 
-    }
-    .check-off-btn {
-        color: #023D8A; 
-        cursor: pointer;
-        margin-right: 10px; 
-    }
-    .add-task-btn {
-        color: #023D8A; 
-    }
-    .no-border-btn {
-        border: none; 
-        background: none; 
-        color: #2B2B2B; 
-    }
+    /* Task Container */
     .task-container {
-        background-color: #ffffff; 
-        padding: 30px; 
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-        overflow-x: auto; 
-        overflow-y: hidden; 
-        white-space: nowrap; 
-        width: 95%; 
-        height: 65%; 
-        display: flex; 
-        flex-direction: column; 
-        position: relative; 
-    }
-    .sticky-header {
-        position: sticky;
-        top: 0;
-        background-color: #ffffff;
-        z-index: 1000;
-        padding: 20px 30px;
-        border-top-left-radius: 20px; 
-        border-top-right-radius: 20px; 
-        width: 95%;
-        height: 10%;
+        display: flex;
+        margin-right : 100vh;
+        margin-left : 10vh;
+        flex-direction: row;
+        gap: 20px;
+        border-radius: 20px;
+        margin-top: 1px;
+        margin-button: 20px;
     }
     .section-container {
-        display: inline-block; 
-        vertical-align: top; 
-        width: 320px; 
-        margin-right: 10px; 
+        background: white;
+        padding: 10px;
+        border-radius: 20px;
+    }
+    .section-header {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    /* Task Card */
+    .task-card {
+        display: flex;
+        background-color: #E9F2FF; 
+        border: 1px solid #D0E4FF;
+        border-radius: 10px;
+        padding: 20px;
+        width: 35vh;
+        height: 15vh;
+        margin-bottom: 5px;
+        flex-direction: column;
+        
+    }
+    .task-header {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .task-title {
+        color: #023D8A;
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .task-date {
+        color: #023D8A;
+        font-size: 14px;
+    }
+    .task-desc {
+        color: #333;
+        font-size: 14px;
     }
     .tasks-wrapper {
         max-height: 230px; 
@@ -130,241 +105,324 @@
     .tasks-wrapper:hover::-webkit-scrollbar-track {
         background-color: #E9F2FF; 
     }
-    .add-task-container {
-        margin-top: 10px; 
+    /* Add Task Button */
+    .add-task-btn {
+        width: 35vh;
+        background-color: white;
+        color: #023D8A;
+        border: 1px solid #023D8A;
+        border-radius: 5px;
+        padding: 2px 0;
+        margin-top: 10px;
+        text-align: center;
+        cursor: pointer;
+        font-weight: bold;
     }
-    .modal-lg-custom {
-        max-width: 60%;
+    .add-task-btn:hover {
+        background-color: #023D8A;
+        color: white;
     }
-    .save-btn {
-        background-color: #023D8A; 
-        border-color: #023D8A; 
+    /* Calendar View Toggle */
+    .sticky-header {
+        display: flex;
+        margin-top: 20px;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 20px;
+        align-items: center;
     }
-    .save-btn:hover {
-        background-color: #022c6a; 
-        border-color: #022c6a;
+    .sticky-header h1.calendo {
+        margin-right: 700px; /* Adjust spacing to your preference */
     }
-    .delete-btn {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
+    
+    .body-container{
+        margin-top: 40px;
+        margin-left: 50px;
+        margin-right: 50px;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        height: 80vh;
+    }
+    /* Calendar View */
+    .calendar-view .section-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .calendar .task-card {
+        flex: 1 1 calc(33.333% - 20px); /* Adjust for 3-column grid */
+        height: auto;
+        background-color: #E9F2FF;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    /* List View (Default) */
+    .list-view .section-container {
+        display: block;
+        margin-bottom: 20px;
+    }
+
+    .list-view .task-card {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    /* Calendar View */
+    .calendar-view {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .calendar-view .section-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        flex: 1 1 100%; /* Full width sections */
+    }
+
+    .calendar-view .task-card {
+        flex: 1 1 calc(33.333% - 20px); /* Responsive grid for tasks */
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 5px;
+        border-radius: 10px;
+        text-align: center;
     }
 </style>
-<div class="container mt-4">
+
+<div class="body-container bg-white">
+<div class="container">
+    <!-- Sticky Header -->
     <div class="sticky-header">
         <h1 class="text-primary calendo"><span class="calen">calen</span><span class="do">DO</span></h1>
-        <div class="d-flex justify-content-end mb-1">
-            <button class="btn no-border-btn me-2">
+        <div class="dropdown">
+            <button class="btn dropdown-toggle no-border-btn" type="button" id="taskViewDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-tasks"></i> Task View
             </button>
+            <ul class="dropdown-menu" aria-labelledby="taskViewDropdown">
+                <li><a class="dropdown-item" href="#" id="listViewBtn">List View</a></li>
+                <li><a class="dropdown-item" href="#" id="calendarViewBtn">Calendar View</a></li>
+            </ul>
+        </div>
             <button class="btn no-border-btn me-2" data-bs-toggle="modal" data-bs-target="#priorityModal">
                 <i class="fas fa-flag"></i> Priority
             </button>
             <button class="btn no-border-btn" data-bs-toggle="modal" data-bs-target="#sortModal">
                 <i class="fas fa-sort"></i> Sort
             </button>
-        </div>
     </div>
+
+    <!-- Task Sections -->
     <div class="task-container">
-        <div class="d-flex flex-row">
-            {% if sections_and_tasks %}
-                {% for section, tasks in sections_and_tasks.items %}
-                <div class="section-container">
-                    <div class="card">
-                        <div class="card-header bg-light">{{ section }}</div>
-                        <div class="card-body tasks-wrapper">
-                            {% for task in tasks %}
-                            <div class="card mb-2 task-card" data-task-id="{{ task.id }}" data-task-priority="{{ task.priority }}" data-task-due-date="{{ task.due_date }}">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center">
-                                        <input type="checkbox" class="form-check-input check-off-btn" data-task-id="{{ task.id }}">
-                                        <h5 class="card-title task-title">{{ task.task_name }}</h5>
-                                    </div>
-                                    <div class="task-content">
-                                        <p class="card-text task-text">{{ task.description }}</p>
-                                        <p class="text-muted task-date">{{ task.due_date }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <div class="add-task-container">
-                            <button class="btn btn-outline-primary w-100 add-task-btn" data-bs-toggle="modal" data-bs-target="#addTaskModal">
-                                <i class="fas fa-plus-circle"></i> Add Another Task
-                            </button>
-                        </div>
+        {% if sections_and_tasks %}
+            {% for section, tasks in sections_and_tasks.items %}
+            <div class="section-container">
+                <div class="section-header">{{ section }}</div>
+                {% for task in tasks %}
+                <div class="task-card" data-task-id="{{ task.id }}" data-task-priority="{{ task.priority }}" data-task-due-date="{{ task.due_date }}">
+                    <div class="task-header">
+                        <input type="checkbox" class="form-check-input" data-task-id="{{ task.id }}">
+                        <div class="task-title">{{ task.task_name }}</div>
                     </div>
+                    <div class="task-desc">{{ task.description }}</div>
+                    <div class="task-date">{{ task.due_date }}</div>
                 </div>
                 {% endfor %}
-            {% else %}
-                <div class="col-md-12 text-center">
-                    <p>Yey! You have completed your tasks. Click the button below to add a new task.</p>
-                    <button class="btn btn-outline-primary add-task-btn" data-bs-toggle="modal" data-bs-target="#addTaskModal">
-                        <i class="fas fa-plus-circle"></i> Add Task
+                <div>
+                    <button class="add-task-btn" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                        <i class="fas fa-plus-circle"></i> Add Another Task
                     </button>
                 </div>
-            {% endif %}
-        </div>
-        <button id="deleteSelectedTasksBtn" class="btn btn-danger delete-btn" style="display: none;">Delete Selected Tasks</button>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-md-12 text-center">
+                <p>Yey! You have completed your tasks. Click the button below to add a new task.</p>
+                <button class="btn btn-outline-primary add-task-btn" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                    <i class="fas fa-plus-circle"></i> Add Task
+                </button>
+            </div>
+        {% endif %}
     </div>
+    <button id="deleteSelectedTasksBtn" class="btn btn-danger delete-btn" style="display: none;">Delete Selected Tasks</button>
+</div>
 </div>
 
 <div class="modal fade" id="sortModal" tabindex="-1" aria-labelledby="sortModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="sortModalLabel">Sort Tasks</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <button id="sortSectionAscBtn" class="btn btn-primary mt-2">Sort Sections A-Z</button>
-                <button id="sortSectionDescBtn" class="btn btn-secondary mt-2">Sort Sections Z-A</button>
-            </div>
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="sortModalLabel">Sort Tasks</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <button id="sortSectionAscBtn" class="btn btn-primary mt-2">Sort Sections A-Z</button>
+            <button id="sortSectionDescBtn" class="btn btn-secondary mt-2">Sort Sections Z-A</button>
         </div>
     </div>
 </div>
+</div>
 
+<!-- Modals -->
 {% include 'partials/add-task-modal.html' %}
 {% include 'partials/priority-modal.html' %}
 {% include 'partials/sort-modal.html' %}
 {% include 'partials/task-detail-modal.html' %}
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const sectionContainers = document.querySelectorAll('.section-container');
-        const taskModal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
-        const deleteSelectedTasksBtn = document.getElementById('deleteSelectedTasksBtn');
-        let selectedTasks = [];
+        const taskContainer = document.querySelector('.task-container');
+        const listViewBtn = document.getElementById('listViewBtn');
+        const calendarViewBtn = document.getElementById('calendarViewBtn');
 
-        function attachEventListeners() {
-            const taskCards = document.querySelectorAll('.task-card');
-            taskCards.forEach(card => {
-                card.addEventListener('click', (event) => {
-                    if (event.target.classList.contains('check-off-btn')) {
-                        return;
-                    }
-                    const taskId = card.getAttribute('data-task-id');
-                    fetch(`/todo/task-detail/${taskId}/`)
-                        .then(response => response.json())
-                        .then(data => {
-                            document.getElementById('modalTaskId').value = taskId;
-                            document.getElementById('modalTaskName').innerText = data.task_name;
-                            document.getElementById('modalTaskDescription').innerText = data.description;
-                            document.getElementById('modalDueDate').innerText = data.due_date;
-                            document.getElementById('modalSection').innerText = data.section;
-                            document.getElementById('modalPriority').innerText = data.priority;
-
-                            const notesList = document.getElementById('notesList');
-                            notesList.innerHTML = '';
-                            data.notes.forEach(note => {
-                                const noteElement = document.createElement('div');
-                                noteElement.classList.add('note');
-                                noteElement.innerHTML = `<small style="color: gray;">${note.timestamp}</small><p>${note.content}</p>`;
-                                notesList.appendChild(noteElement);
-                            });
-
-                            taskModal.show();
-                        })
-                        .catch(error => console.error('Error fetching task details:', error));
-                });
-            });
-
-            const checkOffButtons = document.querySelectorAll('.check-off-btn');
-            checkOffButtons.forEach(button => {
-                button.addEventListener('change', (event) => {
-                    event.stopPropagation();
-                    const taskId = button.getAttribute('data-task-id');
-                    if (button.checked) {
-                        selectedTasks.push(taskId);
-                    } else {
-                        selectedTasks = selectedTasks.filter(id => id !== taskId);
-                    }
-                    deleteSelectedTasksBtn.style.display = selectedTasks.length > 0 ? 'block' : 'none';
-                });
-            });
-        }
-
-        attachEventListeners();
-
-        deleteSelectedTasksBtn.addEventListener('click', () => {
-            selectedTasks.forEach(taskId => {
-                fetch(`/todo/delete-task/${taskId}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        document.querySelector(`.task-card[data-task-id="${taskId}"]`).remove();
-                    } else {
-                        alert('Failed to delete the task.');
-                    }
-                })
-                .catch(error => console.error('Error deleting task:', error));
-            });
-            selectedTasks = [];
-            deleteSelectedTasksBtn.style.display = 'none';
+        // Redirect to List View page
+        listViewBtn.addEventListener('click', () => {
+            window.location.href = "{% url 'list-view' %}";
         });
 
-        // Filter tasks by priority
-        document.getElementById('applyPriorityFilter').addEventListener('click', () => {
-            const selectedPriority = document.getElementById('priorityFilter').value;
-            sectionContainers.forEach(section => {
-                let hasVisibleTasks = false;
-                const tasks = section.querySelectorAll('.task-card');
-                tasks.forEach(task => {
-                    const taskPriority = task.getAttribute('data-task-priority');
-                    if (selectedPriority === 'all' || taskPriority === selectedPriority) {
-                        task.style.display = 'block';
-                        hasVisibleTasks = true;
-                    } else {
-                        task.style.display = 'none';
-                    }
-                });
-                if (hasVisibleTasks) {
-                    section.style.display = 'block';
+        // Toggle to Calendar View
+        calendarViewBtn.addEventListener('click', () => {
+            taskContainer.classList.remove('list-view');
+            taskContainer.classList.add('calendar-view');
+        });
+    });
+
+    const sectionContainers = document.querySelectorAll('.section-container');
+    const taskModal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
+    const deleteSelectedTasksBtn = document.getElementById('deleteSelectedTasksBtn');
+    let selectedTasks = [];
+
+    function attachEventListeners() {
+        const taskCards = document.querySelectorAll('.task-card');
+        taskCards.forEach(card => {
+            card.addEventListener('click', (event) => {
+                if (event.target.classList.contains('check-off-btn')) {
+                    return;
+                }
+                const taskId = card.getAttribute('data-task-id');
+                fetch(`/todo/task-detail/${taskId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('modalTaskId').value = taskId;
+                        document.getElementById('modalTaskName').innerText = data.task_name;
+                        document.getElementById('modalTaskDescription').innerText = data.description;
+                        document.getElementById('modalDueDate').innerText = data.due_date;
+                        document.getElementById('modalSection').innerText = data.section;
+                        document.getElementById('modalPriority').innerText = data.priority;
+
+                        const notesList = document.getElementById('notesList');
+                        notesList.innerHTML = '';
+                        data.notes.forEach(note => {
+                            const noteElement = document.createElement('div');
+                            noteElement.classList.add('note');
+                            noteElement.innerHTML = `<small style="color: gray;">${note.timestamp}</small><p>${note.content}</p>`;
+                            notesList.appendChild(noteElement);
+                        });
+
+                        taskModal.show();
+                    })
+                    .catch(error => console.error('Error fetching task details:', error));
+            });
+        });
+
+        const checkOffButtons = document.querySelectorAll('.check-off-btn');
+        checkOffButtons.forEach(button => {
+            button.addEventListener('change', (event) => {
+                event.stopPropagation();
+                const taskId = button.getAttribute('data-task-id');
+                if (button.checked) {
+                    selectedTasks.push(taskId);
                 } else {
-                    section.style.display = 'none';
+                    selectedTasks = selectedTasks.filter(id => id !== taskId);
+                }
+                deleteSelectedTasksBtn.style.display = selectedTasks.length > 0 ? 'block' : 'none';
+            });
+        });
+    }
+
+    attachEventListeners();
+
+    deleteSelectedTasksBtn.addEventListener('click', () => {
+        selectedTasks.forEach(taskId => {
+            fetch(`/todo/delete-task/${taskId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.querySelector(`.task-card[data-task-id="${taskId}"]`).remove();
+                } else {
+                    alert('Failed to delete the task.');
+                }
+            })
+            .catch(error => console.error('Error deleting task:', error));
+        });
+        selectedTasks = [];
+        deleteSelectedTasksBtn.style.display = 'none';
+    });
+
+    // Filter tasks by priority
+    document.getElementById('applyPriorityFilter').addEventListener('click', () => {
+        const selectedPriority = document.getElementById('priorityFilter').value;
+        sectionContainers.forEach(section => {
+            let hasVisibleTasks = false;
+            const tasks = section.querySelectorAll('.task-card');
+            tasks.forEach(task => {
+                const taskPriority = task.getAttribute('data-task-priority');
+                if (selectedPriority === 'all' || taskPriority === selectedPriority) {
+                    task.style.display = 'block';
+                    hasVisibleTasks = true;
+                } else {
+                    task.style.display = 'none';
                 }
             });
-            const priorityModal = bootstrap.Modal.getInstance(document.getElementById('priorityModal'));
-            priorityModal.hide();
-            document.body.classList.remove('modal-open');
-            const modalBackdrop = document.querySelector('.modal-backdrop');
-            if (modalBackdrop) {
-                modalBackdrop.remove();
+            if (hasVisibleTasks) {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
             }
         });
-
-        // Sort sections alphabetically
-        document.getElementById('sortSectionAscBtn').addEventListener('click', () => {
-            sortSections(true);
-        });
-
-        document.getElementById('sortSectionDescBtn').addEventListener('click', () => {
-            sortSections(false);
-        });
-
-        function sortSections(ascending) {
-            const sections = Array.from(document.querySelectorAll('.section-container'));
-            sections.sort((a, b) => {
-                const sectionA = a.querySelector('.card-header').innerText.toLowerCase();
-                const sectionB = b.querySelector('.card-header').innerText.toLowerCase();
-                return ascending ? sectionA.localeCompare(sectionB) : sectionB.localeCompare(sectionA);
-            });
-            const taskContainer = document.querySelector('.task-container .d-flex');
-            taskContainer.innerHTML = '';
-            sections.forEach(section => taskContainer.appendChild(section));
-            const sortModal = bootstrap.Modal.getInstance(document.getElementById('sortModal'));
-            sortModal.hide();
-            document.body.classList.remove('modal-open');
-            const modalBackdrop = document.querySelector('.modal-backdrop');
-            if (modalBackdrop) {
-                modalBackdrop.remove();
-            }
+        const priorityModal = bootstrap.Modal.getInstance(document.getElementById('priorityModal'));
+        priorityModal.hide();
+        document.body.classList.remove('modal-open');
+        const modalBackdrop = document.querySelector('.modal-backdrop');
+        if (modalBackdrop) {
+            modalBackdrop.remove();
         }
     });
+
+    // Sort sections alphabetically
+    document.getElementById('sortSectionAscBtn').addEventListener('click', () => {
+        sortSections(true);
+    });
+
+    document.getElementById('sortSectionDescBtn').addEventListener('click', () => {
+        sortSections(false);
+    });
+
+    function sortSections(ascending) {
+        const sections = Array.from(document.querySelectorAll('.section-container'));
+        sections.sort((a, b) => {
+            const sectionA = a.querySelector('.card-header').innerText.toLowerCase();
+            const sectionB = b.querySelector('.card-header').innerText.toLowerCase();
+            return ascending ? sectionA.localeCompare(sectionB) : sectionB.localeCompare(sectionA);
+        });
+        const taskContainer = document.querySelector('.task-container .d-flex');
+        taskContainer.innerHTML = '';
+        sections.forEach(section => taskContainer.appendChild(section));
+        const sortModal = bootstrap.Modal.getInstance(document.getElementById('sortModal'));
+        sortModal.hide();
+        document.body.classList.remove('modal-open');
+        const modalBackdrop = document.querySelector('.modal-backdrop');
+        if (modalBackdrop) {
+            modalBackdrop.remove();
+        }
+    }
 </script>
 {% endblock %}
