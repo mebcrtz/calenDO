@@ -6,7 +6,6 @@
 
 {% block content %}
 <style>
-    /* General Styles */
     * {
         margin: 0;
         padding: 0;
@@ -61,11 +60,6 @@
     }
     .task-date {
         color: #023D8A; 
-    }
-    .check-off-btn {
-        color: #023D8A; 
-        cursor: pointer;
-        margin-right: 10px; 
     }
     .add-task-btn {
         color: #023D8A; 
@@ -178,8 +172,10 @@
                             <div class="card mb-2 task-card" data-task-id="{{ task.id }}" data-task-priority="{{ task.priority }}" data-task-due-date="{{ task.due_date }}">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
-                                        <input type="checkbox" class="form-check-input check-off-btn" data-task-id="{{ task.id }}">
                                         <h5 class="card-title task-title">{{ task.task_name }}</h5>
+                                        <button class="btn btn-danger btn-sm ms-auto delete-task-btn" data-task-id="{{ task.id }}" data-bs-toggle="modal" data-bs-target="#deleteTaskModal">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
                                     </div>
                                     <div class="task-content">
                                         <p class="card-text task-text">{{ task.description }}</p>
@@ -225,6 +221,25 @@
     </div>
 </div>
 
+<div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteTaskModalLabel">Delete Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this task?</p>
+                <input type="hidden" id="deleteTaskId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteTaskBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% include 'partials/add-task-modal.html' %}
 {% include 'partials/priority-modal.html' %}
 {% include 'partials/sort-modal.html' %}
@@ -234,29 +249,30 @@
     document.addEventListener('DOMContentLoaded', () => {
         const sectionContainers = document.querySelectorAll('.section-container');
         const taskModal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
+        const deleteTaskModal = new bootstrap.Modal(document.getElementById('deleteTaskModal'));
         const deleteSelectedTasksBtn = document.getElementById('deleteSelectedTasksBtn');
+        const confirmDeleteTaskBtn = document.getElementById('confirmDeleteTaskBtn');
         let selectedTasks = [];
-    
+        let taskIdToDelete = null;
+
         function attachEventListeners() {
             const taskCards = document.querySelectorAll('.task-card');
             taskCards.forEach(card => {
                 card.addEventListener('click', (event) => {
-                    if (event.target.classList.contains('check-off-btn')) {
-                        return; // Skip checkbox clicks
+                    if (event.target.classList.contains('delete-task-btn') || event.target.closest('.delete-task-btn')) {
+                        return; 
                     }
                     const taskId = card.getAttribute('data-task-id');
                     fetch(`/todo/task-detail/${taskId}/`)
                         .then(response => response.json())
                         .then(data => {
-                            // Populate the modal with data
-                            document.getElementById('modalTaskId').value = taskId; // Hidden input
-                            document.getElementById('modalTaskName').value = data.task_name; // Editable input
-                            document.getElementById('modalTaskDescription').value = data.description; // Editable textarea
-                            document.getElementById('modalDueDate').value = data.due_date; // Editable input
-                            document.getElementById('modalSection').value = data.section; // Editable input
-                            document.getElementById('modalPriority').value = data.priority; // Editable select
-    
-                            // Populate notes
+                            document.getElementById('modalTaskId').value = taskId; 
+                            document.getElementById('modalTaskName').value = data.task_name; 
+                            document.getElementById('modalTaskDescription').value = data.description; 
+                            document.getElementById('modalDueDate').value = data.due_date; 
+                            document.getElementById('modalSection').value = data.section; 
+                            document.getElementById('modalPriority').value = data.priority; 
+
                             const notesList = document.getElementById('notesList');
                             notesList.innerHTML = '';
                             data.notes.forEach(note => {
@@ -265,33 +281,27 @@
                                 noteElement.innerHTML = `<small style="color: gray;">${note.timestamp}</small><p>${note.content}</p>`;
                                 notesList.appendChild(noteElement);
                             });
-    
+
                             taskModal.show();
                         })
                         .catch(error => console.error('Error fetching task details:', error));
                 });
             });
-    
-            const checkOffButtons = document.querySelectorAll('.check-off-btn');
-            checkOffButtons.forEach(button => {
-                button.addEventListener('change', (event) => {
-                    event.stopPropagation();
-                    const taskId = button.getAttribute('data-task-id');
-                    if (button.checked) {
-                        selectedTasks.push(taskId);
-                    } else {
-                        selectedTasks = selectedTasks.filter(id => id !== taskId);
-                    }
-                    deleteSelectedTasksBtn.style.display = selectedTasks.length > 0 ? 'block' : 'none';
+
+            const deleteTaskButtons = document.querySelectorAll('.delete-task-btn');
+            deleteTaskButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.stopPropagation(); 
+                    taskIdToDelete = button.getAttribute('data-task-id');
+                    document.getElementById('deleteTaskId').value = taskIdToDelete;
+                    deleteTaskModal.show();
                 });
             });
-        }
-    
-        attachEventListeners();
-    
-        deleteSelectedTasksBtn.addEventListener('click', () => {
-            selectedTasks.forEach(taskId => {
-                fetch(`/todo/delete-task/${taskId}/`, {
+
+            confirmDeleteTaskBtn.addEventListener('click', () => {
+                const taskId = document.getElementById('deleteTaskId').value;
+
+                fetch(`/delete-task/${taskId}/`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
@@ -299,17 +309,32 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        document.querySelector(`.task-card[data-task-id="${taskId}"]`).remove();
+                        const taskCard = document.querySelector(`.task-card[data-task-id="${taskId}"]`);
+                        const sectionContainer = taskCard.closest('.section-container');
+                        taskCard.remove();
+
+                        if (sectionContainer.querySelectorAll('.task-card').length === 0) {
+                            sectionContainer.remove();
+                        }
+
+                        deleteTaskModal.hide();
+
+                        const modalBackdrop = document.querySelector('.modal-backdrop');
+                        if (modalBackdrop) {
+                            modalBackdrop.remove();
+                        }
+
+                        taskIdToDelete = null;
                     } else {
                         alert('Failed to delete the task.');
                     }
                 })
                 .catch(error => console.error('Error deleting task:', error));
             });
-            selectedTasks = [];
-            deleteSelectedTasksBtn.style.display = 'none';
-        });
-    
+        }
+
+        attachEventListeners();
+
         // Filter tasks by priority
         document.getElementById('applyPriorityFilter').addEventListener('click', () => {
             const selectedPriority = document.getElementById('priorityFilter').value;
@@ -339,16 +364,16 @@
                 modalBackdrop.remove();
             }
         });
-    
+
         // Sort sections alphabetically
         document.getElementById('sortSectionAscBtn').addEventListener('click', () => {
             sortSections(true);
         });
-    
+
         document.getElementById('sortSectionDescBtn').addEventListener('click', () => {
             sortSections(false);
         });
-    
+
         function sortSections(ascending) {
             const sections = Array.from(document.querySelectorAll('.section-container'));
             sections.sort((a, b) => {
@@ -368,21 +393,22 @@
             }
         }
     });
+
     document.addEventListener('DOMContentLoaded', () => {
         const addNoteButton = document.getElementById('addNoteButton');
         const notesList = document.getElementById('notesList');
         const modalNotes = document.getElementById('modalNotes');
         const modalTaskId = document.getElementById('modalTaskId');
-    
+
         addNoteButton.addEventListener('click', () => {
             const taskId = modalTaskId.value;
             const noteContent = modalNotes.value;
-    
+
             if (!noteContent.trim()) {
                 alert("Note content cannot be empty.");
                 return;
             }
-    
+
             fetch('/todo/add-note/', {
                 method: 'POST',
                 headers: {
@@ -397,19 +423,16 @@
                     alert("Failed to add note: " + data.error);
                     return;
                 }
-    
-                // Add the new note to the notes list
+
                 const noteElement = document.createElement('div');
                 noteElement.classList.add('note');
                 noteElement.innerHTML = `<small style="color: gray;">${data.timestamp}</small><p>${data.content}</p>`;
                 notesList.appendChild(noteElement);
-    
-                // Clear the textarea
+
                 modalNotes.value = '';
             })
             .catch(error => console.error('Error adding note:', error));
         });
     });
-    
 </script>
 {% endblock %}
