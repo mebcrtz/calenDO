@@ -149,7 +149,6 @@ def update_task(request):
     if request.method == "POST":
         task_id = request.POST.get("task_id")
         if not task_id:
-            messages.error(request, "Task ID is missing.")
             return redirect('todo_index')
 
         try:
@@ -167,8 +166,6 @@ def update_task(request):
             messages.error(request, "Task not found.")
 
         return redirect('todo_index')
-
-    messages.error(request, "Invalid request method.")
     return redirect('todo_index')
 
 def set_priority(request):
@@ -179,11 +176,8 @@ def set_priority(request):
             task = Task.objects.get(id=task_id)
             task.priority = priority
             task.save()
-            messages.success(request, "Task updated successfully!")
         except Task.DoesNotExist:
             return JsonResponse({"error": "Task not found"}, status=404)
-
-    messages.error(request, "Invalid request method.")
     return redirect('todo_index')
 
 def set_priority(request):
@@ -267,10 +261,8 @@ def create_schedule(request):
                 schedule_name=schedule_name,
                 user=request.user
             )
-            messages.success(request, "Schedule created successfully!")
             return redirect("calendar_index")
         else:
-            messages.error(request, "Schedule name is required.")
             return redirect("calendar_index")
     return render(request, "create_schedule.html")
 
@@ -287,7 +279,6 @@ def add_schedule_item(request, schedule_name):
         end_times = request.POST.getlist("endTime[]")
 
         if not item_name or not days or not start_times or not end_times:
-            messages.error(request, "All fields are required!")
             return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
         item = Item.objects.create(
@@ -307,7 +298,6 @@ def add_schedule_item(request, schedule_name):
                 day_of_week, _ = DayOfWeek.objects.get_or_create(name=day)
                 occurrence.days_of_week.add(day_of_week)
 
-        messages.success(request, "Item added successfully!")
         return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
     return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
@@ -339,7 +329,6 @@ def update_item_details(request, schedule_name, pk):
                 day_of_week, _ = DayOfWeek.objects.get_or_create(name=day)
                 occurrence.days_of_week.add(day_of_week)
 
-        messages.success(request, 'Item updated successfully!')
         return redirect("schedule_detail", schedule_name=schedule_name)
 
 
@@ -348,7 +337,6 @@ def remove_schedule_item(request, pk):
     if request.method == "POST":
         schedule_name = item.schedule.slug
         item.delete()
-        messages.success(request, "Item removed successfully!")
         return redirect("schedule_detail", schedule_name=schedule_name)
     return redirect("schedule_detail", schedule_name=item.schedule.slug)
 
@@ -357,10 +345,8 @@ def delete_schedule(request, schedule_name):
     if request.method == "POST":
         schedule = get_object_or_404(Schedule, slug=schedule_name, user=request.user)
         schedule.delete()
-        messages.success(request, f"The schedule '{schedule.schedule_name}' has been deleted.")
         return redirect("calendar_index")
     else:
-        messages.error(request, "Invalid request method.")
         return redirect("calendar_index")
 
 
@@ -503,5 +489,4 @@ def export_schedule(request, schedule_name, file_type):
         return FileResponse(buffer, as_attachment=True, filename=f"{schedule.schedule_name}.{file_type}")
 
     else:
-        messages.error(request, "Invalid file type.")
         return redirect("schedule_detail", schedule_name=schedule_name)
