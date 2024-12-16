@@ -322,7 +322,8 @@
 {% include "partials/confirm-remove-item-modal.html" %}
 {% include "partials/confirm-schedule-delete-modal.html" %}
 {% include "partials/export-schedule-modal.html" %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -385,6 +386,35 @@
         });
         calendar.render();
     });
+
+    function exportCalendar(exportType) {
+    const calendarDiv = document.getElementById("interactiveCalendar");
+    const scheduleName = document.getElementById("scheduleName").textContent.trim(); // Assuming schedule name is available in a header
+
+    html2canvas(calendarDiv).then(canvas => {
+        if (exportType === 'png' || exportType === 'jpg') {
+            const image = canvas.toDataURL(`image/${exportType}`);
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = `${scheduleName}.${exportType}`;
+            link.click();
+        } else if (exportType === 'pdf') {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgData = canvas.toDataURL('image/png');
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`${scheduleName}.pdf`);
+        }
+    }).catch(err => {
+        console.error("Error exporting calendar:", err);
+        alert("Failed to export calendar. Please try again.");
+    });
+}
+
 </script>
 
 {% endblock %}
