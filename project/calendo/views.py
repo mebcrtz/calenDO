@@ -215,8 +215,11 @@ def calendar_index(request, schedule_name=None):
     schedules = Schedule.objects.filter(user=request.user)
     days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
+    # Get the first schedule or None if no schedules exist
     first_schedule = schedules.first()
     schedule = first_schedule if schedule_name is None else get_object_or_404(Schedule, slug=schedule_name, user=request.user)
+
+    # Default to an empty list if no schedule is available
     items = schedule.items.prefetch_related('occurrences__days_of_week') if schedule else []
 
     # Get current week dates
@@ -239,7 +242,7 @@ def calendar_index(request, schedule_name=None):
     return render(request, "calendar/calendar-index.html", {
         "schedules": schedules,
         "schedule": schedule,
-        "schedule_slug": schedule.slug,
+        "schedule_slug": schedule.slug if schedule else None,  # Handle None case
         "first_schedule": first_schedule,
         "items": items,
         "days_of_week": days_of_week,
