@@ -235,6 +235,7 @@ def calendar_index(request, schedule_name=None):
     return render(request, "calendar/calendar-index.html", {
         "schedules": schedules,
         "schedule": schedule,
+        "schedule_slug": schedule.slug,
         "first_schedule": first_schedule,
         "items": items,
         "days_of_week": days_of_week,
@@ -296,9 +297,9 @@ def add_schedule_item(request, schedule_name):
     return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
 
-def update_item_details(request):
+def update_item_details(request, schedule_name, pk):
     if request.method == 'POST':
-        item_id = request.POST.get('item_id')
+        item_id = pk  # Use `pk` from the URL
         item = get_object_or_404(Item, id=item_id)
 
         item.item_name = request.POST.get('itemName')
@@ -306,6 +307,7 @@ def update_item_details(request):
         item.notes = request.POST.get('notes')
         item.save()
 
+        # Delete and recreate occurrences
         item.occurrences.all().delete()
         days = request.POST.getlist('days[]')
         start_time = request.POST.get('startTime')
@@ -322,7 +324,7 @@ def update_item_details(request):
                 occurrence.days_of_week.add(day_of_week)
 
         messages.success(request, 'Item updated successfully!')
-        return redirect("schedule_detail", schedule_name=item.schedule.slug)
+        return redirect("schedule_detail", schedule_name=schedule_name)
 
 
 def remove_schedule_item(request, pk):
