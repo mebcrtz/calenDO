@@ -83,21 +83,54 @@
 </style>
     <!-- Dashboard Content -->
     <div class="container">
+        <!-- Schedules Section -->
+        <div class="section">
+            <h2>Schedules</h2>
+            <div class="section-content">
+                {% if schedules %}
+                    {% for schedule in schedules %}
+                        <div class="card">
+                            <h3>{{ schedule.schedule_name }}</h3>
+                            <p>Created on: {{ schedule.created_at|date:"F j, Y" }}</p>
+                            <a href="{% url 'schedule_detail' schedule.slug %}" class="btn btn-primary">View Schedule</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="card">
+                        <h3>No Schedules Available</h3>
+                        <p>You have no schedules yet. Start creating some!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    
         <!-- To-Do List Section -->
         <div class="section">
             <h2>To-Do List</h2>
             <div class="section-content">
-                <div class="card">
-                    <h3 style="padding-top: 50px;">No To-Do Items</h3>
-                    <p>You have no to-do items yet. Start adding some!</p>
-                </div>
-            </div>
-            <h2 style="margin-top: 20px;">Calendar</h2>
-            <div class="section-content">
-                <div class="card">
-                    <h3 style="padding-top: 50px;">No Items in Calendar</h3>
-                    <p>You have no items yet. Start adding some!</p>
-                </div>
+                {% if sections_and_tasks %}
+                    {% for section, tasks in sections_and_tasks.items %}
+                        <div class="card">
+                            <h3>{{ section }}</h3>
+                            <ul>
+                                {% for task in tasks %}
+                                    <li>
+                                        <strong>{{ task.task_name }}</strong>
+                                        <p>{{ task.description }}</p>
+                                        <p>Due: {{ task.due_date|date:"F j, Y" }}</p>
+                                        <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-primary">View Details</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="card">
+                        <h3>No To-Do Items</h3>
+                        <p>You have no to-do items yet. Start adding some!</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
-{% endblock %}
+    </div>
+    {% endblock %}
