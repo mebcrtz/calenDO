@@ -268,49 +268,117 @@
             });
         });
 
-        // Edit Task Title
+    });
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const taskCards = document.querySelectorAll('.task-card');
+        const taskDetailModal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
+        let currentTaskId = null;
+    
+        // Edit Task - Open Modal and Populate Data
         document.querySelectorAll('.edit-task-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const taskCard = button.closest('.task-card');
-                const taskId = taskCard.getAttribute('data-task-id');
-                const taskTitleElement = taskCard.querySelector('.task-title');
-                const taskDescElement = taskCard.querySelector('.task-desc');
-                const taskDateElement = taskCard.querySelector('.task-date');
-                const deleteTaskModal = new bootstrap.Modal(document.getElementById('deleteTaskModal'));
-                const deleteSelectedTasksBtn = document.getElementById('deleteSelectedTasksBtn');
-                const confirmDeleteTaskBtn = document.getElementById('confirmDeleteTaskBtn');
-                let selectedTasks = [];
-                let taskIdToDelete = null;
-                
-                const newTitle = prompt("Edit Task Title", taskTitleElement.textContent);
-                const newDesc = prompt("Edit Task Description", taskDescElement.textContent);
-                const newDate = prompt("Edit Task Due Date", taskDateElement.textContent);
-
-                if (newTitle || newDesc || newDate) {
-                    // Update backend with AJAX or form submission
-                    fetch(`/update-task/${taskId}/`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        body: JSON.stringify({ new_title: newTitle, new_desc: newDesc, new_date: newDate })
-                    }).then(response => {
-                        if (response.ok) {
-                            if (newTitle) taskTitleElement.textContent = newTitle;
-                            if (newDesc) taskDescElement.textContent = newDesc;
-                            if (newDate) taskDateElement.textContent = newDate;
-                        } else {
-                            alert('Failed to update task.');
-                        }
-                    }).catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while updating the task.');
-                    });
-                }
+                currentTaskId = taskCard.getAttribute('data-task-id');
+    
+                fetch(`/todo/task-detail/${currentTaskId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Populate modal fields
+                        document.getElementById('modalTaskId').value = currentTaskId;
+                        document.getElementById('modalTaskName').value = data.task_name;
+                        document.getElementById('modalTaskDescription').value = data.description;
+                        document.getElementById('modalDueDate').value = data.due_date;
+                        document.getElementById('modalSection').value = data.section;
+                        document.getElementById('modalPriority').value = data.priority;
+                        const notesList = document.getElementById('notesList');
+                        notesList.innerHTML = '';
+                        data.notes.forEach(note => {
+                            const noteElement = document.createElement('div');
+                            noteElement.classList.add('note');
+                            noteElement.innerHTML = `<small style="color: gray;">${note.timestamp}</small><p>${note.content}</p>`;
+                            notesList.appendChild(noteElement);
+                        });
+                        taskDetailModal.show();
+                    })
+                    .catch(error => console.error('Error fetching task details:', error));
             });
         });
+    
+        // Save Edited Task
+        document.getElementById('saveTaskChangesBtn').addEventListener('click', () => {
+            const updatedTask = {
+                task_name: document.getElementById('modalTaskName').value,
+                description: document.getElementById('modalTaskDescription').value,
+                due_date: document.getElementById('modalDueDate').value,
+                section: document.getElementById('modalSection').value,
+                priority: document.getElementById('modalPriority').value
+            };
+    
+            fetch(`/todo/update-task/${currentTaskId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(updatedTask)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Update task card dynamically
+                    const taskCard = document.querySelector(`.task-card[data-task-id="${currentTaskId}"]`);
+                    taskCard.querySelector('.task-title').textContent = updatedTask.task_name;
+                    taskCard.querySelector('.task-desc').textContent = updatedTask.description;
+                    taskCard.querySelector('.task-date').textContent = updatedTask.due_date;
+    
+                    taskDetailModal.hide();
+                } else {
+                    alert('Failed to save task changes.');
+                }
+            })
+            .catch(error => console.error('Error updating task:', error));
+        });
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+        const addNoteButton = document.getElementById('addNoteButton');
+        const notesList = document.getElementById('notesList');
+        const modalNotes = document.getElementById('modalNotes');
+        const modalTaskId = document.getElementById('modalTaskId');
 
+        addNoteButton.addEventListener('click', () => {
+            const taskId = modalTaskId.value;
+            const noteContent = modalNotes.value;
+
+            if (!noteContent.trim()) {
+                alert("Note content cannot be empty.");
+                return;
+            }
+
+            fetch('/todo/add-note/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: JSON.stringify({ task_id: taskId, notes: noteContent }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Failed to add note: " + data.error);
+                    return;
+                }
+
+                const noteElement = document.createElement('div');
+                noteElement.classList.add('note');
+                noteElement.innerHTML = `<small style="color: gray;">${data.timestamp}</small><p>${data.content}</p>`;
+                notesList.appendChild(noteElement);
+
+                modalNotes.value = '';
+            })
+            .catch(error => console.error('Error adding note:', error));
+        });
     });
 </script>
 

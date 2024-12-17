@@ -166,7 +166,8 @@ def update_task(request):
         except Task.DoesNotExist:
             messages.error(request, "Task not found.")
 
-        return redirect('todo_index')
+        redirect_path = request.POST.get('redirect_to', 'todo_index')
+        return redirect(redirect_path)
     return redirect('todo_index')
 
 def set_priority(request):

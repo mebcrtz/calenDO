@@ -12,7 +12,8 @@
                 <form id="taskDetailForm" method="POST" action="{% url 'update_task' %}">
                     {% csrf_token %}
                     <input type="hidden" id="modalTaskId" name="task_id">
-
+                    <!-- Add Hidden Input to Track the Source View -->
+                    <input type="hidden" name="redirect_to" value="{{ request.path }}">
                     <!-- Task Name -->
                     <div class="mb-3">
                         <label for="modalTaskName" class="form-label fw-bold" style="color: #023D8A; font-size: 0.9rem;">Task Name</label>
