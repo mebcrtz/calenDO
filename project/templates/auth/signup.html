@@ -5,140 +5,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup - calenDO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
     body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f5f5f5;
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(to bottom right, #0a2a66, #4e73df);
+        color: #333;
     }
     .container {
         display: flex;
-        max-width: 1000px;
+        max-width: 900px;
         width: 100%;
-        margin-right: 30px;
-        margin-left: 5px;
-        align-items: flex-start;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .container:hover {
+        transform: scale(1.02);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
     }
     .left {
-        background: #0a2a66;
-        color: white;
-        padding: 93px;
-        margin-right: 20%;
-        margin-top: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background: white;
+        color: #0a2a66;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         width: 50%;
+        text-align: center;
     }
     .left img {
-        width: 300px;
-        margin-bottom: 20px;
-    }
-    .left h2 {
+        width: 200px;
         margin-bottom: 20px;
     }
     .left p {
-        text-align: left;
+        font-size: 1rem;
         line-height: 1.6;
     }
     .right {
-        margin-left: 10px; /* Add some spacing between the sections */
+        background: #f5f5f5;
+        padding: 40px;
         width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
     }
-    .right h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #0a2a66;
+        margin-bottom: 10px;
     }
     .form-group {
         margin-bottom: 20px;
+        position: relative;
     }
     .form-group input {
         width: 100%;
-        padding: 10px;
+        padding: 12px 10px;
         font-size: 16px;
         border: none;
-        border-bottom: 2px solid #0a2a66;
-        border-radius: 0;
-        background-color: transparent;
-        color: #0a2a66;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+    .form-group input:focus {
+        outline: none;
+        box-shadow: 0 0 12px #0a2a66;
+    }
+    .form-group input::placeholder {
+        color: #999;
     }
     .form-group button {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         font-size: 16px;
-        background: #0a2a66;
+        background: linear-gradient(to right, #0a2a66, #0944a8);
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-    }
-    .form-group input::placeholder {
-        color: #0a2a66; /* Set placeholder color */
+        transition: background 0.3s ease, transform 0.3s ease;
     }
     .form-group button:hover {
-        background: #0944a8;
-    }
-    .or {
-        text-align: center;
-        margin: 20px 0;
-    }
-    .alt-signup {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    .alt-signup button {
-        padding: 10px 20px;
-        font-size: 16px;
-        background: #eaeaea;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
-        width: 100%;
-    }
-    .alt-signup button:hover {
-        background: #ddd;
-    }
-    .signin-link {
-        text-align: center;
-        margin-top: 20px;
+        background: linear-gradient(to right, #0944a8, #0a2a66);
+        transform: translateY(-2px);
     }
     .signin-link a {
         color: #0a2a66;
         text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
     }
     .signin-link a:hover {
         text-decoration: underline;
-    }
-    .center-align {
-        text-align: center;
-        color: #0a2a66;
-        font-size: 3em; /* Adjust the size as needed */
-        font-weight: bold; /* Make the text bold */
-    }
-    .or-line {
-        display: flex;
-        align-items: center;
-        text-align: center;
-        margin: 20px 0;
-        color: #0a2a66;
-        margin-top: 50px;
-    }
-    .or-line::before,
-    .or-line::after {
-        content: '';
-        flex: 1;
-        border-bottom: 3px solid #000;
-        margin-right: 20px;
-        margin-left: 30px;
-    }
-    .or-line:not(:empty)::before {
-        margin-right: .50em;
-    }
-    .or-line:not(:empty)::after {
-        margin-left: .50em;
+        color: #063a8e;
     }
     .error-message ul {
         list-style-type: none;
@@ -146,62 +119,71 @@
         font-size: 14px;
         margin-top: 5px;
     }
+    .or-line {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px 0;
+    }
+    .or-line::before, .or-line::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #ccc;
+        margin: 0 10px;
+    }
 </style>
 </head>
 <body>
     <div class="container">
-        <!-- Left Section (Inside the Box) -->
+        <!-- Left Section -->
         <div class="left">
             <img src="{% static 'images/signup.png' %}" alt="Plan Includes">
-            <p>✔ Organize your tasks and deadlines<br>
-               ✔ Create schedule views for all your events</p>
+            <p>Organize your tasks, manage your deadlines, and create your perfect schedule with calenDO.</p>
         </div>
 
-        <!-- Right Section (Outside the Box) -->
-        <div class="right" style="text-align:center;">
-            <h1 class="center-align" style="font-size: 3em; font-weight: bold;">WELCOME</h1>
-            <p>Sign up to calenDO.</p>
-            
+        <!-- Right Section -->
+        <div class="right">
+            <h1>Welcome!</h1>
+            <p>Sign up for your <b>calendDO</b> account.</p>
+            <br>
             <form method="POST" action="">
                 {% csrf_token %}
-                <!-- Display non-field errors -->
+                <!-- Non-field errors -->
                 {% if form.non_field_errors %}
                     <div class="error-message">
-                        {{ form.non_field_errors }}
+                        <ul>
+                            {{ form.non_field_errors }}
+                        </ul>
                     </div>
                 {% endif %}
                 <div class="form-group">
-                    <!-- Display field-specific errors -->
                     {% if form.username.errors %}
                         <div class="error-message">
-                            {{ form.username.errors }}
+                            <ul>{{ form.username.errors }}</ul>
                         </div>
                     {% endif %}
                     {{ form.username }}
                 </div>
                 <div class="form-group">
-                    <!-- Display field-specific errors -->
                     {% if form.email.errors %}
                         <div class="error-message">
-                            {{ form.email.errors }}
+                            <ul>{{ form.email.errors }}</ul>
                         </div>
                     {% endif %}
                     {{ form.email }}
                 </div>
                 <div class="form-group">
-                    <!-- Display field-specific errors -->
                     {% if form.password1.errors %}
                         <div class="error-message">
-                            {{ form.password1.errors }}
+                            <ul>{{ form.password1.errors }}</ul>
                         </div>
                     {% endif %}
                     {{ form.password1 }}
                 </div>
                 <div class="form-group">
-                    <!-- Display field-specific errors -->
                     {% if form.password2.errors %}
                         <div class="error-message">
-                            {{ form.password2.errors }}
+                            <ul>{{ form.password2.errors }}</ul>
                         </div>
                     {% endif %}
                     {{ form.password2 }}
@@ -210,10 +192,10 @@
                     <button type="submit">Sign Up</button>
                 </div>
             </form>
-            
             <div class="signin-link">
-                <p>Already have an account? <a href="{% url 'login' %}">Log in</a>.</p>
+                <p>Already have an account? <a href="{% url 'login' %}">Log in here</a>.</p>
             </div>
         </div>
+    </div>
 </body>
 </html>
