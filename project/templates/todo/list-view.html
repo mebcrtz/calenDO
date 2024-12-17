@@ -8,7 +8,6 @@
 
 {% block content %}
 <style>
-    /* General Styles */
     * {
         margin: 0;
         padding: 0;
@@ -127,8 +126,7 @@
         align-items: center;
     }
     .sticky-header h1.calendo {
-        margin-right: 700px; /* Adjust spacing to your preference */
-    }
+        margin-right: 700px; 
 
     .body-container {
         margin-top: 40px;
@@ -233,23 +231,19 @@
         const taskContainer = document.querySelector('.task-container');
         const listViewBtn = document.getElementById('listViewBtn');
 
-        // Redirect to Default View page
         document.getElementById('defaultViewBtn').addEventListener('click', () => {
             window.location.href = "{% url 'todo_index' %}";
         });
 
-        // Redirect to List View page
         listViewBtn.addEventListener('click', () => {
             window.location.href = "{% url 'list-view' %}";
         });
 
-        // Edit Section Title
         document.querySelectorAll('.edit-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const section = button.getAttribute('data-section');
                 const newTitle = prompt("Edit Section Title", section);
                 if (newTitle) {
-                    // Update backend with AJAX or form submission
                     fetch(`/update-section/${section}`, {
                         method: 'POST',
                         headers: {
@@ -270,13 +264,11 @@
 
     });
 
-
     document.addEventListener('DOMContentLoaded', () => {
         const taskCards = document.querySelectorAll('.task-card');
         const taskDetailModal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
         let currentTaskId = null;
     
-        // Edit Task - Open Modal and Populate Data
         document.querySelectorAll('.edit-task-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const taskCard = button.closest('.task-card');
@@ -285,7 +277,6 @@
                 fetch(`/todo/task-detail/${currentTaskId}/`)
                     .then(response => response.json())
                     .then(data => {
-                        // Populate modal fields
                         document.getElementById('modalTaskId').value = currentTaskId;
                         document.getElementById('modalTaskName').value = data.task_name;
                         document.getElementById('modalTaskDescription').value = data.description;
@@ -306,7 +297,6 @@
             });
         });
     
-        // Save Edited Task
         document.getElementById('saveTaskChangesBtn').addEventListener('click', () => {
             const updatedTask = {
                 task_name: document.getElementById('modalTaskName').value,
@@ -326,7 +316,6 @@
             })
             .then(response => {
                 if (response.ok) {
-                    // Update task card dynamically
                     const taskCard = document.querySelector(`.task-card[data-task-id="${currentTaskId}"]`);
                     taskCard.querySelector('.task-title').textContent = updatedTask.task_name;
                     taskCard.querySelector('.task-desc').textContent = updatedTask.description;
@@ -340,6 +329,7 @@
             .catch(error => console.error('Error updating task:', error));
         });
     });
+
     document.addEventListener('DOMContentLoaded', () => {
         const addNoteButton = document.getElementById('addNoteButton');
         const notesList = document.getElementById('notesList');
@@ -379,6 +369,63 @@
             })
             .catch(error => console.error('Error adding note:', error));
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const sectionContainers = document.querySelectorAll('.section-container');
+
+        // Filter tasks by priority
+        document.getElementById('applyPriorityFilter').addEventListener('click', () => {
+            const selectedPriority = document.getElementById('priorityFilter').value.toLowerCase();
+            sectionContainers.forEach(section => {
+                let hasVisibleTasks = false;
+                const tasks = section.querySelectorAll('.task-card');
+                tasks.forEach(task => {
+                    const taskPriority = task.getAttribute('data-task-priority').toLowerCase();
+                    if (selectedPriority === 'all' || taskPriority === selectedPriority) {
+                        task.style.display = 'block';
+                        hasVisibleTasks = true;
+                    } else {
+                        task.style.display = 'none';
+                    }
+                });
+                if (hasVisibleTasks) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+            const priorityModal = bootstrap.Modal.getInstance(document.getElementById('priorityModal'));
+            priorityModal.hide();
+            document.body.classList.remove('modal-open');
+            const modalBackdrop = document.querySelector('.modal-backdrop');
+            if (modalBackdrop) {
+                modalBackdrop.remove();
+            }
+        });
+
+        // Sort sections alphabetically
+        document.getElementById('sortSectionAscBtn').addEventListener('click', () => {
+            sortSections(true);
+        });
+
+        document.getElementById('sortSectionDescBtn').addEventListener('click', () => {
+            sortSections(false);
+        });
+
+        function sortSections(ascending) {
+            const sections = Array.from(document.querySelectorAll('.section-container'));
+            sections.sort((a, b) => {
+                const sectionA = a.querySelector('.section-title').innerText.toLowerCase();
+                const sectionB = b.querySelector('.section-title').innerText.toLowerCase();
+                return ascending ? sectionA.localeCompare(sectionB) : sectionB.localeCompare(sectionA);
+            });
+            const taskContainer = document.querySelector('.task-container');
+            taskContainer.innerHTML = '';
+            sections.forEach(section => taskContainer.appendChild(section));
+            const sortModal = bootstrap.Modal.getInstance(document.getElementById('sortModal'));
+            sortModal.hide();
+        }
     });
 </script>
 
