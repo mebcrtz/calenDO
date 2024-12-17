@@ -282,7 +282,6 @@ def add_schedule_item(request, schedule_name):
 
         # Validation: Ensure all required fields are provided
         if not item_name or not days or not start_times or not end_times:
-            messages.error(request, "All fields are required!")
             return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
         # Create the Item object
@@ -295,7 +294,6 @@ def add_schedule_item(request, schedule_name):
 
         # Ensure alignment between days and time slots
         if len(days) != len(start_times) or len(days) != len(end_times):
-            messages.error(request, "Mismatch between selected days and time slots!")
             return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
         # Loop to create occurrences for each day and time pair
