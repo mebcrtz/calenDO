@@ -309,9 +309,6 @@ def add_schedule_item(request, schedule_name):
                 end_time=end_time
             )
             occurrence.days_of_week.add(day_of_week)
-
-        # Success message and redirect
-        messages.success(request, "Item added successfully!")
         return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
     # Fallback redirect for GET requests
