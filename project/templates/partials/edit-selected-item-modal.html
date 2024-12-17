@@ -77,15 +77,14 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <label for="startTime" class="form-label">Start Time:</label>
-                                <input type="time" class="form-control" id="startTime" name="startTime" required>
+                                <label class="form-label">Start Time:</label>
+                                <input type="time" class="form-control" name="startTime" required>
                             </div>
                             <div class="col">
-                                <label for="endTime" class="form-label">End Time:</label>
-                                <input type="time" class="form-control" id="endTime" name="endTime" required>
+                                <label class="form-label">End Time:</label>
+                                <input type="time" class="form-control" name="endTime" required>
                             </div>
                         </div>
-                    </div>
 
                     <button type="button" class="btn mb-3" id="editAddTimeButton" style="background-color: #023D8A; color: white;">Add Another Time</button>
 
@@ -111,19 +110,19 @@
     // Function to format time to HH:mm
     function formatTimeToHHMM(timeString) {
         if (!timeString) return "";
-
+    
         const [time, modifier] = timeString.split(" ");
         let [hours, minutes] = time.split(":");
-
+    
         if (!hours || !minutes || !modifier) return "";
-
+    
         if (modifier.toLowerCase() === "p.m." && hours !== "12") {
             hours = parseInt(hours, 10) + 12;
         }
         if (modifier.toLowerCase() === "a.m." && hours === "12") {
             hours = "00";
         }
-        return `${hours.padStart(2, "0")}:${minutes}`;
+        return `${String(hours).padStart(2, "0")}:${minutes}`;
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -147,8 +146,7 @@
         const modal = document.getElementById('editItemDetailsModal');
         modal.addEventListener('shown.bs.modal', function () {
             const form = document.getElementById('editItemDetailsForm');
-            const startTime = document.getElementById('startTime');
-            const endTime = document.getElementById('endTime');
+            const timeBlocksContainer = document.getElementById('editTimeBlocks');
 
             const { itemId, itemName, occurrences } = selectedButtonData;
 
@@ -156,33 +154,83 @@
             document.getElementById('editItemId').value = itemId;
             document.getElementById('editItemName').value = itemName;
 
-            // Populate occurrences
+            // Clear any existing dynamic blocks
+            timeBlocksContainer.innerHTML = `
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label">Start Time:</label>
+                        <input type="time" class="form-control" name="startTime" required>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">End Time:</label>
+                        <input type="time" class="form-control" name="endTime" required>
+                    </div>
+                </div>
+            `;
+
+            // Populate the first slot
             if (occurrences.length > 0) {
-                const occurrence = occurrences[0];
-                startTime.value = formatTimeToHHMM(occurrence.start_time);
-                endTime.value = formatTimeToHHMM(occurrence.end_time);
-            } else {
-                startTime.value = "";
-                endTime.value = "";
+                const firstBlock = timeBlocksContainer.querySelector('.row');
+                if (firstBlock) {
+                    const startTimeInput = firstBlock.querySelector('input[name="startTime"]');
+                    const endTimeInput = firstBlock.querySelector('input[name="endTime"]');
+            
+                    if (startTimeInput && endTimeInput) {
+                        console.log("Populating Start Time:", occurrences[0].start_time);
+                        startTimeInput.value = formatTimeToHHMM(occurrences[0].start_time);
+                        endTimeInput.value = formatTimeToHHMM(occurrences[0].end_time);
+                    } else {
+                        console.error("Start or End Time input fields are missing in the DOM.");
+                    }
+                } else {
+                    console.error("First time block row is missing in the DOM.");
+                }
+            }
+
+            // Add additional slots dynamically
+            for (let i = 1; i < occurrences.length; i++) {
+                const occurrence = occurrences[i];
+                const newTimeBlock = document.createElement('div');
+                newTimeBlock.classList.add('row', 'mt-2');
+
+                newTimeBlock.innerHTML = `
+                    <div class="col">
+                        <label class="form-label">Start Time:</label>
+                        <input type="time" class="form-control" name="startTime" value="${formatTimeToHHMM(occurrence.start_time)}" required>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">End Time:</label>
+                        <input type="time" class="form-control" name="endTime" value="${formatTimeToHHMM(occurrence.end_time)}" required>
+                    </div>
+                    <div class="col-auto d-flex align-items-end">
+                        <button type="button" class="btn btn-danger remove-time-block">Remove</button>
+                    </div>
+                `;
+
+                timeBlocksContainer.appendChild(newTimeBlock);
+
+                // Add event listener for removing the block
+                newTimeBlock.querySelector('.remove-time-block').addEventListener('click', function () {
+                    newTimeBlock.remove();
+                });
             }
         });
 
         // Handle "Add Another Time" button click
         const addTimeButton = document.getElementById('editAddTimeButton');
-        const timeBlocksContainer = document.getElementById('editTimeBlocks');
-
         addTimeButton.addEventListener('click', function () {
-            // Create a new row for time input fields
+            const timeBlocksContainer = document.getElementById('editTimeBlocks');
+
             const newTimeBlock = document.createElement('div');
             newTimeBlock.classList.add('row', 'mt-2');
 
             newTimeBlock.innerHTML = `
                 <div class="col">
-                    <label for="startTime" class="form-label">Start Time:</label>
+                    <label class="form-label">Start Time:</label>
                     <input type="time" class="form-control" name="startTime" required>
                 </div>
                 <div class="col">
-                    <label for="endTime" class="form-label">End Time:</label>
+                    <label class="form-label">End Time:</label>
                     <input type="time" class="form-control" name="endTime" required>
                 </div>
                 <div class="col-auto d-flex align-items-end">
@@ -192,7 +240,6 @@
 
             timeBlocksContainer.appendChild(newTimeBlock);
 
-            // Add event listener to remove button
             newTimeBlock.querySelector('.remove-time-block').addEventListener('click', function () {
                 newTimeBlock.remove();
             });

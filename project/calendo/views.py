@@ -315,31 +315,43 @@ def add_schedule_item(request, schedule_name):
 
 def update_item_details(request, schedule_name, pk):
     if request.method == 'POST':
-        item_id = pk  # Use `pk` from the URL
+        # Fetch the item to update
+        item_id = pk
         item = get_object_or_404(Item, id=item_id)
 
+        # Update basic details
         item.item_name = request.POST.get('itemName')
         item.type = request.POST.get('itemType')
         item.notes = request.POST.get('notes')
         item.save()
 
-        # Delete and recreate occurrences
+        # Delete existing occurrences to recreate them cleanly
         item.occurrences.all().delete()
-        days = request.POST.getlist('days[]')
-        start_time = request.POST.get('startTime')
-        end_time = request.POST.get('endTime')
 
-        if days and start_time and end_time:
-            occurrence = ItemOccurrence.objects.create(
-                item=item,
-                start_time=start_time,
-                end_time=end_time
-            )
-            for day in days:
-                day_of_week, _ = DayOfWeek.objects.get_or_create(name=day)
-                occurrence.days_of_week.add(day_of_week)
+        # Fetch multiple occurrences (start and end times)
+        start_times = request.POST.getlist('startTime')  # List of start times
+        end_times = request.POST.getlist('endTime')      # List of end times
+        days_list = request.POST.getlist('days[]')       # Days list (checkbox)
+
+        # Loop through all time slots and create occurrences
+        for i in range(len(start_times)):
+            start_time = start_times[i]
+            end_time = end_times[i]
+
+            if start_time and end_time:  # Validate presence of time
+                occurrence = ItemOccurrence.objects.create(
+                    item=item,
+                    start_time=start_time,
+                    end_time=end_time
+                )
+
+                # Assign days to each occurrence
+                for day in days_list:
+                    day_of_week, _ = DayOfWeek.objects.get_or_create(name=day)
+                    occurrence.days_of_week.add(day_of_week)
 
         return redirect("schedule_detail", schedule_name=schedule_name)
+
 
 
 def remove_schedule_item(request, pk):
