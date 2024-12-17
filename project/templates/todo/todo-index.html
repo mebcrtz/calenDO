@@ -30,7 +30,7 @@
     .task-card {
         background-color: #E9F2FF; 
         color: #023D8A; 
-        width: 250px; 
+        width: 90%; 
         margin-right: 10px; 
         word-wrap: break-word; 
         overflow-wrap: break-word; 
@@ -246,6 +246,7 @@
                 </div>
             {% endif %}
         </div>
+        <p id="noTasksMessage" class="text-center mt-4" style="display: none;">No tasks found for the selected priority.</p>
         <button id="deleteSelectedTasksBtn" class="btn btn-danger delete-btn" style="display: none;">Delete Selected Tasks</button>
     </div>
 </div>
@@ -311,6 +312,7 @@
         const deleteTaskModal = new bootstrap.Modal(document.getElementById('deleteTaskModal'));
         const deleteSelectedTasksBtn = document.getElementById('deleteSelectedTasksBtn');
         const confirmDeleteTaskBtn = document.getElementById('confirmDeleteTaskBtn');
+        const noTasksMessage = document.getElementById('noTasksMessage');
         let selectedTasks = [];
         let taskIdToDelete = null;
 
@@ -353,24 +355,23 @@
         // Filter tasks by priority
         document.getElementById('applyPriorityFilter').addEventListener('click', () => {
             const selectedPriority = document.getElementById('priorityFilter').value.toLowerCase();
+            let hasVisibleTasks = false;
             sectionContainers.forEach(section => {
-                let hasVisibleTasks = false;
+                let sectionHasVisibleTasks = false;
                 const tasks = section.querySelectorAll('.task-card');
                 tasks.forEach(task => {
                     const taskPriority = task.getAttribute('data-task-priority').toLowerCase();
                     if (selectedPriority === 'all' || taskPriority === selectedPriority) {
                         task.style.display = 'block';
+                        sectionHasVisibleTasks = true;
                         hasVisibleTasks = true;
                     } else {
                         task.style.display = 'none';
                     }
                 });
-                if (hasVisibleTasks) {
-                    section.style.display = 'block';
-                } else {
-                    section.style.display = 'none';
-                }
+                section.style.display = sectionHasVisibleTasks ? 'block' : 'none';
             });
+            noTasksMessage.style.display = hasVisibleTasks ? 'none' : 'block';
             const priorityModal = bootstrap.Modal.getInstance(document.getElementById('priorityModal'));
             priorityModal.hide();
             document.body.classList.remove('modal-open');
