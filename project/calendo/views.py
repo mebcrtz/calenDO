@@ -280,9 +280,12 @@ def add_schedule_item(request, schedule_name):
         start_times = request.POST.getlist("startTime[]")
         end_times = request.POST.getlist("endTime[]")
 
+        # Validation: Ensure all required fields are provided
         if not item_name or not days or not start_times or not end_times:
+            messages.error(request, "All fields are required!")
             return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
+        # Create the Item object
         item = Item.objects.create(
             schedule=schedule,
             item_name=item_name,
@@ -290,18 +293,28 @@ def add_schedule_item(request, schedule_name):
             notes=notes
         )
 
-        for start_time, end_time in zip(start_times, end_times):
+        # Ensure alignment between days and time slots
+        if len(days) != len(start_times) or len(days) != len(end_times):
+            messages.error(request, "Mismatch between selected days and time slots!")
+            return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
+
+        # Loop to create occurrences for each day and time pair
+        for day, start_time, end_time in zip(days, start_times, end_times):
+            day_of_week, _ = DayOfWeek.objects.get_or_create(name=day)
+
+            # Create ItemOccurrence for this day and time
             occurrence = ItemOccurrence.objects.create(
                 item=item,
                 start_time=start_time,
                 end_time=end_time
             )
-            for day in days:
-                day_of_week, _ = DayOfWeek.objects.get_or_create(name=day)
-                occurrence.days_of_week.add(day_of_week)
+            occurrence.days_of_week.add(day_of_week)
 
+        # Success message and redirect
+        messages.success(request, "Item added successfully!")
         return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
+    # Fallback redirect for GET requests
     return redirect(reverse('schedule_detail', kwargs={'schedule_name': schedule.slug}))
 
 
