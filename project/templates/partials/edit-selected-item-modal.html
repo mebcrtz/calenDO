@@ -110,18 +110,12 @@
 
     // Function to format time to HH:mm
     function formatTimeToHHMM(timeString) {
-        if (!timeString) {
-            console.error("Invalid time string:", timeString);
-            return "";
-        }
+        if (!timeString) return "";
 
         const [time, modifier] = timeString.split(" ");
         let [hours, minutes] = time.split(":");
 
-        if (!hours || !minutes || !modifier) {
-            console.error("Unexpected time format:", timeString);
-            return "";
-        }
+        if (!hours || !minutes || !modifier) return "";
 
         if (modifier.toLowerCase() === "p.m." && hours !== "12") {
             hours = parseInt(hours, 10) + 12;
@@ -139,30 +133,22 @@
         const editButtons = document.querySelectorAll('.edit-item-button');
         editButtons.forEach(button => {
             button.addEventListener('click', function () {
-                // Store data from the clicked button
                 selectedButtonData = {
                     itemId: this.getAttribute('data-item-id'),
                     itemName: this.getAttribute('data-item-name'),
                     occurrences: JSON.parse(this.getAttribute('data-occurrences') || '[]'),
                 };
 
-                // Show the modal
                 const modal = new bootstrap.Modal(document.getElementById('editItemDetailsModal'));
                 modal.show();
             });
         });
 
-        // Attach `shown.bs.modal` event to the modal
         const modal = document.getElementById('editItemDetailsModal');
         modal.addEventListener('shown.bs.modal', function () {
             const form = document.getElementById('editItemDetailsForm');
             const startTime = document.getElementById('startTime');
             const endTime = document.getElementById('endTime');
-
-            if (!form || !startTime || !endTime) {
-                console.error("Form or Time fields not found in DOM!");
-                return;
-            }
 
             const { itemId, itemName, occurrences } = selectedButtonData;
 
@@ -179,6 +165,37 @@
                 startTime.value = "";
                 endTime.value = "";
             }
+        });
+
+        // Handle "Add Another Time" button click
+        const addTimeButton = document.getElementById('editAddTimeButton');
+        const timeBlocksContainer = document.getElementById('editTimeBlocks');
+
+        addTimeButton.addEventListener('click', function () {
+            // Create a new row for time input fields
+            const newTimeBlock = document.createElement('div');
+            newTimeBlock.classList.add('row', 'mt-2');
+
+            newTimeBlock.innerHTML = `
+                <div class="col">
+                    <label for="startTime" class="form-label">Start Time:</label>
+                    <input type="time" class="form-control" name="startTime" required>
+                </div>
+                <div class="col">
+                    <label for="endTime" class="form-label">End Time:</label>
+                    <input type="time" class="form-control" name="endTime" required>
+                </div>
+                <div class="col-auto d-flex align-items-end">
+                    <button type="button" class="btn btn-danger remove-time-block">Remove</button>
+                </div>
+            `;
+
+            timeBlocksContainer.appendChild(newTimeBlock);
+
+            // Add event listener to remove button
+            newTimeBlock.querySelector('.remove-time-block').addEventListener('click', function () {
+                newTimeBlock.remove();
+            });
         });
     });
 </script>
