@@ -195,7 +195,7 @@ def set_priority(request):
 
 def list_view(request):
     # Organize tasks by section
-    tasks = Task.objects.all()
+    tasks = Task.objects.filter(user=request.user)
     sections_and_tasks = {}
     for task in tasks:
         if task.section not in sections_and_tasks:
