@@ -132,6 +132,10 @@
     </script>
 
     <script>
+        document.addEventListener('hidden.bs.modal', () => {
+            document.body.classList.remove('modal-open');
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+        });
         document.addEventListener('DOMContentLoaded', function () {
             const exportOptions = document.querySelectorAll('.export-option');
 
@@ -142,6 +146,52 @@
                     const exportUrl = `/calendar/${scheduleSlug}/export/${fileType}/`;
                     window.location.href = exportUrl; // Redirect to the export URL
                 });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            let taskIdToDelete = null;
+        
+            // Capture the task ID when a delete button is clicked
+            document.body.addEventListener('click', (event) => {
+                if (event.target.closest('.delete-task-btn')) {
+                    const button = event.target.closest('.delete-task-btn');
+                    taskIdToDelete = button.getAttribute('data-task-id');
+                    console.log("Delete button clicked. Task ID:", taskIdToDelete);
+                }
+            });
+        
+            // Confirm and delete the task
+            document.getElementById('confirmDeleteTaskBtn').addEventListener('click', () => {
+                if (taskIdToDelete) {
+                    fetch(`/delete-task/${taskIdToDelete}/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log(`Task ${taskIdToDelete} deleted successfully.`);
+                            // Remove the task card from the DOM
+                            const taskCard = document.querySelector(`.task-card[data-task-id="${taskIdToDelete}"]`);
+                            if (taskCard) {
+                                taskCard.remove();
+                            }
+        
+                            // Hide the modal
+                            const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteTaskModal'));
+                            deleteModal.hide();
+                        } else {
+                            alert('Failed to delete the task. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting task:', error);
+                        alert('An error occurred while deleting the task.');
+                    });
+                }
             });
         });
     </script>

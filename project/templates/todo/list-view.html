@@ -311,50 +311,6 @@
             });
         });
 
-        // Delete Task
-        document.addEventListener('DOMContentLoaded', () => {
-            const confirmDeleteTaskBtn = document.getElementById('confirmDeleteTaskBtn');
-            const deleteTaskModal = document.getElementById('deleteTaskModal');
-            let taskIdToDelete = null;
-        
-            // Capture the task ID when "Delete" is clicked
-            document.querySelectorAll('.delete-task-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    taskIdToDelete = button.getAttribute('data-task-id');
-                    document.getElementById('deleteTaskId').value = taskIdToDelete;
-                });
-            });
-        
-            // Handle confirm delete button click
-            confirmDeleteTaskBtn.addEventListener('click', () => {
-                if (taskIdToDelete) {
-                    fetch(`/delete-task/${taskIdToDelete}/`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'  // Ensure CSRF token is passed
-                        }
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            // Remove task card from the DOM
-                            const taskCard = document.querySelector(`.task-card[data-task-id="${taskIdToDelete}"]`);
-                            if (taskCard) taskCard.remove();
-        
-                            // Hide the modal
-                            bootstrap.Modal.getInstance(deleteTaskModal).hide();
-                        } else {
-                            alert('Failed to delete the task. Please try again.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error deleting task:', error);
-                        alert('An error occurred while deleting the task.');
-                    });
-                }
-            });
-        });
-        
     });
 </script>
 

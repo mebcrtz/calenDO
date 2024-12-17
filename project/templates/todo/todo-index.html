@@ -290,10 +290,7 @@
 {% include 'partials/task-detail-modal.html' %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener('hidden.bs.modal', () => {
-        document.body.classList.remove('modal-open');
-        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-    });
+
     document.addEventListener('DOMContentLoaded', () => {
         const taskContainer = document.querySelector('.task-container');
         const listViewBtn = document.getElementById('listViewBtn');
@@ -350,49 +347,7 @@
                 });
             });
 
-            const deleteTaskButtons = document.querySelectorAll('.delete-task-btn');
-            deleteTaskButtons.forEach(button => {
-                button.addEventListener('click', (event) => {
-                    event.stopPropagation(); 
-                    taskIdToDelete = button.getAttribute('data-task-id');
-                    document.getElementById('deleteTaskId').value = taskIdToDelete;
-                    deleteTaskModal.show();
-                });
-            });
 
-            confirmDeleteTaskBtn.addEventListener('click', () => {
-                const taskId = document.getElementById('deleteTaskId').value;
-
-                fetch(`/delete-task/${taskId}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        const taskCard = document.querySelector(`.task-card[data-task-id="${taskId}"]`);
-                        const sectionContainer = taskCard.closest('.section-container');
-                        taskCard.remove();
-
-                        if (sectionContainer.querySelectorAll('.task-card').length === 0) {
-                            sectionContainer.remove();
-                        }
-
-                        deleteTaskModal.hide();
-
-                        const modalBackdrop = document.querySelector('.modal-backdrop');
-                        if (modalBackdrop) {
-                            modalBackdrop.remove();
-                        }
-
-                        taskIdToDelete = null;
-                    } else {
-                        alert('Failed to delete the task.');
-                    }
-                })
-                .catch(error => console.error('Error deleting task:', error));
-            });
         }
 
         attachEventListeners();
