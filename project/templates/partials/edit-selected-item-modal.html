@@ -1,12 +1,15 @@
 <!-- Edit Item Details Modal -->
 <div class="modal fade" id="editItemDetailsModal" tabindex="-1" aria-labelledby="editItemDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content" style="border: 2px solid #023D8A;">
-            <div class="modal-header" style="background-color: #023D8A; color: white;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 550px; height: auto;">
+        <div class="modal-content" style="border-radius: 8px; border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); height: auto; display: flex; flex-direction: column;">
+            <!-- Modal Header -->
+            <div class="modal-header" style="background-color: #1E4E9D; color: white; padding: 10px 15px;">
                 <h5 class="modal-title" id="editItemDetailsModalLabel">Edit Item Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: white;"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1); font-size: 1rem;"></button>
             </div>
-            <div class="modal-body">
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding: 15px 20px;">
                 <form id="editItemDetailsForm" method="POST" action="">
                     {% csrf_token %}
                     <input type="hidden" name="item_id" id="editItemId">
@@ -14,95 +17,86 @@
                     <!-- Item Type -->
                     <div class="btn-group w-100 mb-3" role="group" aria-label="Event or Class">
                         <input type="radio" class="btn-check" name="itemType" id="editEvent" value="event">
-                        <label class="btn btn-outline-primary" style="color: #023D8A; border: 1px solid #023D8A;" for="editEvent">Event</label>
+                        <label class="btn btn-outline-primary" for="editEvent" style="color: #1E4E9D; border: 1px solid #1E4E9D; font-size: 0.8rem;">Event</label>
 
                         <input type="radio" class="btn-check" name="itemType" id="editClass" value="class">
-                        <label class="btn btn-outline-primary" style="color: #023D8A; border: 1px solid #023D8A;" for="editClass">Class</label>
+                        <label class="btn btn-outline-primary" for="editClass" style="color: #1E4E9D; border: 1px solid #1E4E9D; font-size: 0.8rem;">Class</label>
                     </div>
 
                     <!-- Item Name -->
-                    <div class="mb-3">
-                        <label for="editItemName" class="form-label">Item Name:</label>
-                        <input type="text" class="form-control" id="editItemName" name="itemName" required>
-                    </div>
-
-                    <!-- Item Type -->
-                    <div class="mb-3">
-                        <label for="editItemType" class="form-label">Type:</label>
-                        <select class="form-select" id="editItemType" name="itemType" required>
-                            <option value="event">Event</option>
-                            <option value="class">Class</option>
-                        </select>
-                    </div>
-
-                    <!-- Notes -->
-                    <div class="mb-3">
-                        <label for="editItemNotes" class="form-label">Notes:</label>
-                        <textarea class="form-control" id="editItemNotes" name="notes" rows="3"></textarea>
+                    <div class="mb-2">
+                        <label for="editItemName" class="form-label fw-bold" style="color: #1E4E9D; font-size: 0.8rem;">Item Name:</label>
+                        <input type="text" class="form-control mx-auto" id="editItemName" name="itemName" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.8rem; padding: 0.3rem; width: 100%; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);" required>
                     </div>
 
                     <!-- Occurrences -->
-                    <h6>Occurrences:</h6>
                     <div id="editTimeBlocks">
-                        <label class="form-label">Days:</label>
-                        <div class="mb-2">
-                            <label class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="days[]" value="Monday" id="dayMonday">
-                                Monday
-                            </label>
-                            <label class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="days[]" value="Tuesday" id="dayTuesday">
-                                Tuesday
-                            </label>
-                            <label class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="days[]" value="Wednesday" id="dayWednesday">
-                                Wednesday
-                            </label>
-                            <label class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="days[]" value="Thursday" id="dayThursday">
-                                Thursday
-                            </label>
-                            <label class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="days[]" value="Friday" id="dayFriday">
-                                Friday
-                            </label>
-                            <label class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="days[]" value="Saturday" id="daySaturday">
-                                Saturday
-                            </label>
-                            <label class="form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="days[]" value="Sunday" id="daySunday">
-                                Sunday
-                            </label>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <label for="startTime" class="form-label">Start Time:</label>
-                                <input type="time" class="form-control" id="startTime" name="startTime" required>
+                        <label class="form-label" style="color: #1E4E9D; font-size: 0.8rem;">Days:</label>
+                        <div class="d-flex justify-content-between mb-2">
+                            <div class="text-center" style="width: calc(100% / 7);">
+                                <label for="dayMonday" style="display: block; font-size: 0.8rem; color: #1E4E9D;">Monday</label>
+                                <input class="form-check-input mt-1" type="checkbox" name="days[]" value="Monday" id="dayMonday">
                             </div>
-                            <div class="col">
-                                <label for="endTime" class="form-label">End Time:</label>
-                                <input type="time" class="form-control" id="endTime" name="endTime" required>
+                            <div class="text-center" style="width: calc(100% / 7);">
+                                <label for="dayTuesday" style="display: block; font-size: 0.8rem; color: #1E4E9D;">Tuesday</label>
+                                <input class="form-check-input mt-1" type="checkbox" name="days[]" value="Tuesday" id="dayTuesday">
+                            </div>
+                            <div class="text-center" style="width: calc(100% / 7);">
+                                <label for="dayWednesday" style="display: block; font-size: 0.8rem; color: #1E4E9D;">Wednesday</label>
+                                <input class="form-check-input mt-1" type="checkbox" name="days[]" value="Wednesday" id="dayWednesday">
+                            </div>
+                            <div class="text-center" style="width: calc(100% / 7);">
+                                <label for="dayThursday" style="display: block; font-size: 0.8rem; color: #1E4E9D;">Thursday</label>
+                                <input class="form-check-input mt-1" type="checkbox" name="days[]" value="Thursday" id="dayThursday">
+                            </div>
+                            <div class="text-center" style="width: calc(100% / 7);">
+                                <label for="dayFriday" style="display: block; font-size: 0.8rem; color: #1E4E9D;">Friday</label>
+                                <input class="form-check-input mt-1" type="checkbox" name="days[]" value="Friday" id="dayFriday">
+                            </div>
+                            <div class="text-center" style="width: calc(100% / 7);">
+                                <label for="daySaturday" style="display: block; font-size: 0.8rem; color: #1E4E9D;">Saturday</label>
+                                <input class="form-check-input mt-1" type="checkbox" name="days[]" value="Saturday" id="daySaturday">
+                            </div>
+                            <div class="text-center" style="width: calc(100% / 7);">
+                                <label for="daySunday" style="display: block; font-size: 0.8rem; color: #1E4E9D;">Sunday</label>
+                                <input class="form-check-input mt-1" type="checkbox" name="days[]" value="Sunday" id="daySunday">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-6 mb-2">
+                                <label for="startTime" class="form-label fw-bold" style="color: #1E4E9D; font-size: 0.8rem;">Start Time:</label>
+                                <input type="time" class="form-control" id="startTime" name="startTime" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);" required>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <label for="endTime" class="form-label fw-bold" style="color: #1E4E9D; font-size: 0.8rem;">End Time:</label>
+                                <input type="time" class="form-control" id="endTime" name="endTime" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);" required>
                             </div>
                         </div>
                     </div>
-
-                    <button type="button" class="btn mb-3" id="editAddTimeButton" style="background-color: #023D8A; color: white;">Add Another Time</button>
 
                     <!-- Notes -->
-                    <div class="mb-3">
-                        <label for="editNotes" class="form-label">Notes:</label>
-                        <textarea class="form-control" name="notes" id="editNotes" rows="3">{{ item.notes }}</textarea>
+                    <div class="mb-3 mt-2">
+                        <label for="editNotes" class="form-label fw-bold" style="color: #1E4E9D; font-size: 0.8rem;">Notes:</label>
+                        <input type="text" class="form-control" name="notes" id="editNotes" style="border: 1px solid #ddd; border-radius: 4px; font-size: 0.8rem; width: 100%; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
                     </div>
+
+                    <button type="button" class="btn mb-3" id="editAddTimeButton" style="background-color: white; color: #1E4E9D; font-size: 0.8rem; border: 2px solid #1E4E9D; border-radius: 10px;">
+                        <i class="bi bi-plus-circle me-2"></i> Add Another Time
+                    </button>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn" style="border: 1px solid #023D8A; color: #023D8A;" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="editItemDetailsForm" class="btn" style="background-color: #023D8A; color: white;">Save Changes</button>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer d-flex justify-content-end" style="padding: 15px 15px;">
+                <button type="button" class="btn" style="border: 1px solid #1E4E9D; color: #1E4E9D; font-size: 0.8rem; border-radius: 10px;" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="editItemDetailsForm" class="btn btn-primary btn-sm" style="background-color: #1E4E9D; font-size: 0.8rem; color: white; border: 5px solid #1E4E9D; border-radius: 10px;">
+                    <i class="bi bi-save me-2"></i> Save Changes
+                </button>
             </div>
         </div>
     </div>
 </div>
+
 
 <!-- JavaScript for Dynamic Time Blocks -->
 <script>
