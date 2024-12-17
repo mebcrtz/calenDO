@@ -86,13 +86,14 @@ def create_task(request):
         form = TaskForm(request.POST)
         if form.is_valid():
             task = form.save(commit=False)
-            task.user = request.user  # Ensure task is associated with current user
+            task.user = request.user  # Ensure task is associated with the current user
             task.save()
-            return redirect('todo_index')
+            # Get the redirect path or fallback to the default view
+            redirect_path = request.POST.get('redirect_to', 'todo_index')
+            return redirect(redirect_path)
     else:
         form = TaskForm()
     return render(request, 'modal.html', {'form': form})
-
 
 def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id, user=request.user)
