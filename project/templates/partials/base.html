@@ -148,10 +148,10 @@
                 });
             });
         });
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             let taskIdToDelete = null;
-        
+
             // Capture the task ID when the delete button is clicked
             document.body.addEventListener('click', (event) => {
                 if (event.target.closest('.delete-task-btn')) {
@@ -159,7 +159,7 @@
                     taskIdToDelete = button.getAttribute('data-task-id');
                 }
             });
-        
+
             // Confirm and delete the task
             document.getElementById('confirmDeleteTaskBtn').addEventListener('click', () => {
                 if (taskIdToDelete) {
@@ -173,26 +173,34 @@
                     .then(response => {
                         if (response.ok) {
                             console.log(`Task ${taskIdToDelete} deleted successfully.`);
-        
+
                             // Remove the task card from the DOM
                             const taskCard = document.querySelector(`.task-card[data-task-id="${taskIdToDelete}"]`);
+                            const sectionContainer = taskCard.closest('.section-container');
                             if (taskCard) taskCard.remove();
-        
-                            // Check if there are any remaining tasks
-                            const remainingTasks = document.querySelectorAll('.task-card');
-                            if (remainingTasks.length === 0) {
-                                // Inject the "no tasks" message into the container
-                                const taskContainer = document.querySelector('.task-container');
-                                taskContainer.innerHTML = `
-                                    <div class="col-md-12 text-center">
-                                        <p>Yey! You have completed your tasks. Click the button below to add a new task.</p>
-                                        <button class="btn btn-outline-primary add-task-btn" data-bs-toggle="modal" data-bs-target="#addTaskModal">
-                                            <i class="fas fa-plus-circle"></i> Add Task
-                                        </button>
-                                    </div>
-                                `;
+
+                            // Check if the section has any remaining tasks
+                            const remainingTasksInSection = sectionContainer.querySelectorAll('.task-card');
+                            if (remainingTasksInSection.length === 0) {
+                                // Remove the section from the DOM
+                                sectionContainer.remove();
+
+                                // Check if there are any remaining sections
+                                const remainingSections = document.querySelectorAll('.section-container');
+                                if (remainingSections.length === 0) {
+                                    // Inject the "no tasks" message into the container
+                                    const taskContainer = document.querySelector('.task-container');
+                                    taskContainer.innerHTML = `
+                                        <div class="col-md-12 text-center">
+                                            <p>Yey! You have completed your tasks. Click the button below to add a new task.</p>
+                                            <button class="btn btn-outline-primary add-task-btn" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                                                <i class="fas fa-plus-circle"></i> Add Task
+                                            </button>
+                                        </div>
+                                    `;
+                                }
                             }
-        
+
                             // Hide the delete modal
                             const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteTaskModal'));
                             deleteModal.hide();
@@ -207,6 +215,7 @@
                 }
             });
         });
+
         
     </script>
 </body>
